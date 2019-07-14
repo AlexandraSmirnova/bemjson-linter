@@ -1,5 +1,8 @@
 {
   "name": "bemjson-linter",
   "version": "1.0.0",
-  "main": "index.js"
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup src/index.js --file build/linter.js --format umd"
+  }
 }
