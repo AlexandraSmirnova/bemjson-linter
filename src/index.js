@@ -1,15 +1,16 @@
-import { textLinter, checkIfText } from "./text-checker/index";
-import { formLinter, checkIfForm } from "./form-checker/index";
+import textLinter from "./textChecker/index";
+import formLinter from "./formChecker/index";
+import { checkBlockByName } from "./utils/searchUtils";
 
 
 const checkBemObj = (obj) => {
     const errors = []
 
-    if(checkIfForm(obj)) {
+    if(checkBlockByName(obj, 'form')) {
         errors.push(...formLinter(obj));
     }
 
-    if(checkIfText(obj)) {
+    if(checkBlockByName(obj, 'text')) {
         errors.push(...textLinter(obj));
     }
 
