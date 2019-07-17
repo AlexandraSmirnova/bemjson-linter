@@ -17,15 +17,10 @@ const checkBemObj = (obj) => {
 }
 
 
-const lint = (json) => {
+export const lint = (json) => {
     const bemObj = JSON.parse(json);
 
     return checkBemObj(bemObj);
 };
 
-//for future tests
 console.log(lint(JSON.stringify({ block: "form" })));
-// console.log(lint(JSON.stringify({ block: "layout" })));
-// console.log(lint(JSON.stringify({ block: "layout", mix: [{ block: "form"}] })));
-// console.log(lint(JSON.stringify({ block: "layout", mix: [{ block: "text"}] })));
-// console.log(lint(JSON.stringify({ block: "text" })));
