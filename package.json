@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "rollup src/index.js --file build/linter.js --format umd",
+    "build": "rollup src/index.js --file build/linter.js --format umd --name \"lint\"",
     "test": "jest"
   },
   "devDependencies": {

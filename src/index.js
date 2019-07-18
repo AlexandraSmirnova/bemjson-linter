@@ -24,4 +24,4 @@ export const lint = (json) => {
     return checkBemObj(bemObj);
 };
 
-console.log(lint(JSON.stringify({ block: "form" })));
+window.lint = lint;

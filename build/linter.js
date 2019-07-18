@@ -1,7 +1,8 @@
-(function (factory) {
-    typeof define === 'function' && define.amd ? define(factory) :
-    factory();
-}(function () { 'use strict';
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (global = global || self, factory(global.lint = {}));
+}(this, function (exports) { 'use strict';
 
     var checkH1 = (json) => {
 
@@ -18,10 +19,7 @@
         return [];
     };
 
-    const checkIfText = (obj) => obj.block && obj.block === 'text'
-        || obj.mix  && obj.mix.some((mix) => checkIfText(mix));
-
-    const textLinter = (json) => {
+    var textLinter = (json) => {
         const errors = [];
 
         errors.push(...checkH1());
@@ -51,11 +49,7 @@
         return [];
     };
 
-    const checkIfForm = (obj) => obj.block && obj.block === 'form'
-        || obj.mix  && obj.mix.some((mix) => checkIfForm(mix));
-        
-
-    const formLinter = (json) => {
+    var formLinter = (json) => {
         const errors = [];
 
         errors.push(...checkContent());
@@ -66,14 +60,19 @@
         return errors;
     };
 
+    const checkBlockByName = (obj, blockName) => Boolean(
+        obj.block && obj.block === blockName
+        || obj.mix && obj.mix.some((mix) => checkBlockByName(mix, blockName))
+    );
+
     const checkBemObj = (obj) => {
         const errors = [];
 
-        if(checkIfForm(obj)) {
+        if(checkBlockByName(obj, 'form')) {
             errors.push(...formLinter());
         }
 
-        if(checkIfText(obj)) {
+        if(checkBlockByName(obj, 'text')) {
             errors.push(...textLinter());
         }
 
@@ -87,11 +86,10 @@
         return checkBemObj(bemObj);
     };
 
-    //for future tests
-    console.log(lint(JSON.stringify({ block: "form" })));
-    console.log(lint(JSON.stringify({ block: "layout" })));
-    console.log(lint(JSON.stringify({ block: "layout", mix: [{ block: "form"}] })));
-    console.log(lint(JSON.stringify({ block: "layout", mix: [{ block: "text"}] })));
-    console.log(lint(JSON.stringify({ block: "text" })));
+    window.lint = lint;
+
+    exports.lint = lint;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
 
 }));
