@@ -1,4 +1,6 @@
 import formLinter from '.';
+import errorCodes from './errorCodes';
+
 
 describe('test form linter', () => {
     test.each([
@@ -19,7 +21,13 @@ describe('test form linter', () => {
         ]
     ])('should return error FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL', (content) => {
         const obj = { block: "form", content };
-        const expected = [{ error: '', code: ''}];
+        const expected = [{ 
+            ...errorCodes.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL,
+            location: {
+                start: {column: 3, line: 27},
+                end: { column: 4, line: 32 }
+            }
+        }];
         expect(formLinter(obj)).toEqual(expected);
     })
 
