@@ -73,7 +73,7 @@
 
     var errorCodes = createErrorsDict();
 
-    const calculateLocation = (json, errorBlock) => {
+    const calculateLocation = (errorBlock, json) => {
         const rows = json.split('\n');
         const searchedJson = JSON.stringify(errorBlock);
 
@@ -114,17 +114,17 @@
 
     const checkBlockMods = (block) => block.mods && block.mods.size;  
 
-    const checkContentItem = (item, etalonSize) => {
-        if(checkBlockMods(item)) {
+    const checkBlockContent = (block, etalonSize) => {
+        if(checkBlockMods(block)) {
             if (!etalonSize) {
-                return item.mods.size;
-            } else if (!isSizeRight(item.mods.size)){
-                throw Error();
+                return block.mods.size;
+            } else if (!isSizeRight(block.mods.size, etalonSize)){
+                throw new Error();
             }
         }
 
         if(block.content) {
-            checkContentSize(item.content, etalonSize);
+            checkContentSizes(block.content, etalonSize);
         }
 
         return etalonSize;
@@ -135,10 +135,10 @@
 
         if (Array.isArray(content)) {
             content.forEach((item) => {
-                etalonSize = checkContentItem(item, etalonSize);
+                etalonSize = checkBlockContent(item, etalonSize);
             });
         } else {
-            etalonSize = checkContentItem(item, etalonSize);
+            etalonSize = checkBlockContent(item, etalonSize);
         }
     };
 
@@ -152,7 +152,7 @@
         } catch(e) {
             return [{
                 ...errorCodes.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL,
-                location: calculateLocation(json, objectToCheck),
+                location: calculateLocation(objectToCheck, json),
             }]
         }
 
@@ -176,7 +176,7 @@
         || obj.mix && obj.mix.some((mix) => checkBlockByName(mix, blockName))
     );
 
-    const checkBemObj = (obj) => {
+    const checkBemObj = (obj, json) => {
         const errors = [];
 
         if(checkBlockByName(obj, 'form')) {
@@ -194,7 +194,7 @@
     const lint = (json) => {
         const bemObj = JSON.parse(json);
 
-        return checkBemObj(bemObj);
+        return checkBemObj(bemObj, json);
     };
 
     window.lint = lint;

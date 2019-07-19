@@ -1,4 +1,4 @@
-export const calculateLocation = (json, errorBlock) => {
+export const calculateLocation = (errorBlock, json) => {
     const rows = json.split('\n');
     const searchedJson = JSON.stringify(errorBlock);
 

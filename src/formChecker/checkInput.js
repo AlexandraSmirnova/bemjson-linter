@@ -5,17 +5,17 @@ const isSizeRight = (size, rightSize) => size === rightSize;
 
 const checkBlockMods = (block) => block.mods && block.mods.size;  
 
-const checkContentItem = (item, etalonSize) => {
-    if(checkBlockMods(item)) {
+const checkBlockContent = (block, etalonSize) => {
+    if(checkBlockMods(block)) {
         if (!etalonSize) {
-            return item.mods.size;
-        } else if (!isSizeRight(item.mods.size)){
-            throw Error();
+            return block.mods.size;
+        } else if (!isSizeRight(block.mods.size, etalonSize)){
+            throw new Error();
         }
     }
 
     if(block.content) {
-        checkContentSize(item.content, etalonSize);
+        checkContentSizes(block.content, etalonSize);
     }
 
     return etalonSize;
@@ -26,10 +26,10 @@ const checkContentSizes = (content, rightSize = null) => {
 
     if (Array.isArray(content)) {
         content.forEach((item) => {
-            etalonSize = checkContentItem(item, etalonSize);
+            etalonSize = checkBlockContent(item, etalonSize);
         });
     } else {
-        etalonSize = checkContentItem(item, etalonSize);
+        etalonSize = checkBlockContent(item, etalonSize);
     }
 }
 
@@ -43,7 +43,7 @@ export default (objectToCheck, json) => {
     } catch(e) {
         return [{
             ...errorCodes.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL,
-            location: calculateLocation(json, objectToCheck),
+            location: calculateLocation(objectToCheck, json),
         }]
     }
 

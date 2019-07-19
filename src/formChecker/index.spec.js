@@ -31,7 +31,7 @@ describe('test form linter', () => {
                 end: { column: 2, line: 17 }
             }
         ]
-    ])('should return error FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL', (content, location) => {
+    ])('should return error FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL for %p', (content, location) => {
         const obj = { block: "form", content };
         const expected = [{ 
             ...errorCodes.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL,
@@ -42,8 +42,17 @@ describe('test form linter', () => {
     })
 
     test.each([
+        { block: 'test'},
+        {
+            block: "form",
+            content: [
+                { block: "text", mods: { size: "l" } },
+                { block: "input", mods: { size: "l" } },
+            ]
+ 
+        }
 
-    ])('should return array without errors', () => {
-
+    ])('should return array without errors for %p', (obj) => {
+        expect(formLinter(obj, JSON.stringify(obj))).toEqual([]);
     });
 });

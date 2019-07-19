@@ -36,6 +36,6 @@ describe('test calculate location', () => {
             }
         ]
     ])('should return location %p for block', (searchedBlock, expected) => {
-        expect(calculateLocation(mockJson, searchedBlock)).toEqual(expected);
+        expect(calculateLocation(searchedBlock, mockJson)).toEqual(expected);
     })
 });

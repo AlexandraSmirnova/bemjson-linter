@@ -3,7 +3,7 @@ import formLinter from "./formChecker/index";
 import { checkBlockByName } from "./utils/searchUtils";
 
 
-const checkBemObj = (obj) => {
+const checkBemObj = (obj, json) => {
     const errors = []
 
     if(checkBlockByName(obj, 'form')) {
@@ -21,7 +21,7 @@ const checkBemObj = (obj) => {
 export const lint = (json) => {
     const bemObj = JSON.parse(json);
 
-    return checkBemObj(bemObj);
+    return checkBemObj(bemObj, json);
 };
 
 window.lint = lint;
