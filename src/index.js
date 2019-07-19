@@ -7,11 +7,11 @@ const checkBemObj = (obj) => {
     const errors = []
 
     if(checkBlockByName(obj, 'form')) {
-        errors.push(...formLinter(obj));
+        errors.push(...formLinter(obj, json));
     }
 
     if(checkBlockByName(obj, 'text')) {
-        errors.push(...textLinter(obj));
+        errors.push(...textLinter(obj, json));
     }
 
     return errors
