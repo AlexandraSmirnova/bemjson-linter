@@ -1,4 +1,4 @@
-import formLinter from '.';
+import { formLinter } from '.';
 import errorCodes from './errorCodes';
 
 

@@ -1,7 +1,7 @@
 import { calculateLocation } from "./jsonUtils";
 
 
-const mockJson = `{
+const mockJson1 = `{
     "block": "form",
     "content": [
         {
@@ -19,6 +19,19 @@ const mockJson = `{
     ]
 }`;
 
+
+const mockJson2 = `{
+    "block": "foo",
+    "content": [
+        {
+            "block": "bar"
+        },
+        {
+            "block": "bar"
+        }
+    ]
+}`;
+
 describe('test calculate location', () => {
     test.each([
         [
@@ -29,13 +42,35 @@ describe('test calculate location', () => {
             }
         ],
         [
-            JSON.parse(mockJson),
+            JSON.parse(mockJson1),
             {
                 start: { column: 1, "line": 1 },
                 end: { column: 2, "line": 17 }
             }
         ]
     ])('should return location %p for block', (searchedBlock, expected) => {
-        expect(calculateLocation(searchedBlock, mockJson)).toEqual(expected);
+        expect(calculateLocation(searchedBlock, mockJson1)).toEqual(expected);
+    })
+
+    test.each([
+        [
+            { block: "bar" },
+            0, 
+            {
+                start: { column: 9, line: 4 },
+                end: { column: 10, line: 6 }
+            }
+        ],
+        [
+            { block: "bar" },
+            5,
+            {
+                start: { column: 9, line: 7 },
+                end: { column: 10, line: 9 }
+            }
+        ]
+
+    ])('test repeated blocks %#', (searchedBlock, lineStart, expected) => {
+        expect(calculateLocation(searchedBlock, mockJson2, lineStart)).toEqual(expected);
     })
 });

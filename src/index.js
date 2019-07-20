@@ -1,20 +1,13 @@
-import textLinter from "./textChecker/index";
-import formLinter from "./formChecker/index";
-import { checkBlockByName } from "./utils/searchUtils";
-
+import { textLinter } from "./textChecker/index";
+import { formLinter } from "./formChecker/index";
 
 const checkBemObj = (obj, json) => {
     const errors = []
 
-    if(checkBlockByName(obj, 'form')) {
-        errors.push(...formLinter(obj, json));
-    }
+    errors.push(...formLinter(obj, json));
+    errors.push(...textLinter(obj, json));
 
-    if(checkBlockByName(obj, 'text')) {
-        errors.push(...textLinter(obj, json));
-    }
-
-    return errors
+    return errors;
 }
 
 
