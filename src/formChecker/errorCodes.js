@@ -15,6 +15,7 @@ const errors = {
 
 const createErrorsDict = () => {
     const errorsDict = {};
+    
     Object.keys(errors).forEach((code) => {
         errorsDict[code] = {
             code: `FORM.${code}`,

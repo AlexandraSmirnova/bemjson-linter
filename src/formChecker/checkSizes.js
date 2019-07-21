@@ -1,20 +1,19 @@
 import errorCodes from "./errorCodes";
 import { calculateLocation } from "../utils/jsonUtils";
+import { isSizeRight } from "./sizeHelpers";
 
-const isSizeRight = (size, rightSize) => size === rightSize;
-
-const checkBlockMods = (block) => block.mods && block.mods.size;  
+const checkBlockMods = (block) => block.mods && block.mods.size;
 
 const checkBlockContent = (block, etalonSize) => {
-    if(checkBlockMods(block)) {
+    if (checkBlockMods(block)) {
         if (!etalonSize) {
             return block.mods.size;
-        } else if (!isSizeRight(block.mods.size, etalonSize)){
-            throw new Error();
+        } else if (!isSizeRight(block.mods.size, etalonSize)) {
+            throw new Error(etalonSize);
         }
     }
 
-    if(block.content) {
+    if (block.content) {
         etalonSize = checkContentSizes(block.content, etalonSize);
     }
 
@@ -23,7 +22,7 @@ const checkBlockContent = (block, etalonSize) => {
 
 const checkContentSizes = (content, rightSize = null) => {
     let etalonSize = rightSize;
-    
+
     if (Array.isArray(content)) {
         content.forEach((item) => {
             etalonSize = checkBlockContent(item, etalonSize);
@@ -36,16 +35,21 @@ const checkContentSizes = (content, rightSize = null) => {
 }
 
 export default (objectToCheck, json) => {
+    let etalonSize = null;
     try {
         if (objectToCheck.content) {
-            checkContentSizes(objectToCheck.content);
+            etalonSize = checkContentSizes(objectToCheck.content);
         }
-    } catch(e) {
-        return [{
-            ...errorCodes.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL,
-            location: calculateLocation(objectToCheck, json),
-        }]
+    } catch (e) {
+        etalonSize = e.message;
+        return {
+            sizeErrors: [{
+                ...errorCodes.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL,
+                location: calculateLocation(objectToCheck, json),
+            }],
+            etalonSize
+        }
     }
 
-    return [];
+    return { sizeErrors: [], etalonSize };
 }

@@ -1,17 +1,21 @@
 import checkContent from "./checkContent";
 import checkFooter from "./checkFooter";
 import checkHeader from "./checkHeader";
-import checkInput from "./checkInput";
+import checkSizesAndGetEtalon from "./checkSizes";
 import { checkBlockByName } from "../utils/searchUtils";
 import { makeBranches } from "../utils/treeUtils";
 
-const checkBlockForm = (objToCheck, json) => {
+const checkBlockForm = (obj, json) => {
     const errors = [];
+    
+    const { sizeErrors, etalonSize } = checkSizesAndGetEtalon(obj, json);
+    errors.push(...sizeErrors);
 
-    errors.push(...checkContent(json));
-    errors.push(...checkFooter(json));
-    errors.push(...checkHeader(json));
-    errors.push(...checkInput(objToCheck, json));
+    if (checkBlockByName(obj, 'content')) {
+        errors.push(...checkContent(obj, json, etalonSize));
+    }
+    errors.push(...checkFooter(obj, json, etalonSize));
+    errors.push(...checkHeader(obj, json, etalonSize));
     
     return errors;
 }

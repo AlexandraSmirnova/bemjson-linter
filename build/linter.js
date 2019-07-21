@@ -82,6 +82,7 @@
 
     const checkBlockByName = (obj, blockName) => Boolean(
         obj.block && obj.block === blockName
+        || obj.elem && obj.elem === blockName
         || obj.mix && obj.mix.some((mix) => checkBlockByName(mix, blockName))
     );
 
@@ -153,21 +154,6 @@
         return errors;
     };
 
-    var checkContent = (json) => {
-
-        return [];
-    };
-
-    var checkFooter = (json) => {
-
-        return [];
-    };
-
-    var checkHeader = (json) => {
-
-        return [];
-    };
-
     const errors$1 = {
         INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL: 'Подписи и поля должны быть одного размера',
         CONTENT_VERTICAL_SPACE_IS_INVALID: `Вертикальный внутренний отступ контентного элемента со значением space-v 
@@ -185,6 +171,7 @@
 
     const createErrorsDict$1 = () => {
         const errorsDict = {};
+        
         Object.keys(errors$1).forEach((code) => {
             errorsDict[code] = {
                 code: `FORM.${code}`,
@@ -197,20 +184,90 @@
 
     var errorCodes$1 = createErrorsDict$1();
 
+    const sizes = ['xxxxs', 'xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxxl'];
+
     const isSizeRight = (size, rightSize) => size === rightSize;
 
-    const checkBlockMods = (block) => block.mods && block.mods.size;  
+    const isSpaceVRight = (spaceV, rightSize) => {
+        const index = sizes.indexOf(rightSize) + 2;
+
+        return sizes[index] === spaceV;
+    };
+
+    const isSpaceHRight = (spaceV, rightSize) => {
+        const index = sizes.indexOf(rightSize) + 1;
+
+        return sizes[index] === spaceV;
+    };
+
+    const getSpaceV = (block) => block.mods && block.mods["space-v"]
+        ? block.mods["space-v"]
+        : null;
+
+    const getSpaceH = (block) => block.mods && block.mods["space-h"]
+        ? block.mods["space-h"]
+        : null;
+
+    const checkSpaces = (mix, etalonSize) => {
+        const spaceV = getSpaceV(mix); 
+        const spaceH = getSpaceH(mix); 
+        
+        if(spaceV && !isSpaceVRight(spaceV, etalonSize)) {
+            throw new Error(errorCodes$1.CONTENT_VERTICAL_SPACE_IS_INVALID.code);
+        }
+
+        if(spaceH && !isSpaceHRight(spaceH, etalonSize)) {
+            throw new Error(errorCodes$1.CONTENT_HORIZONTAL_SPACE_IS_INVALID.code);
+        }
+    };
+
+    const checkSpacesAndIndents = (block, etalonSize) => {
+        if(block.mix) {
+            makeBranches(block.mix, (mix) => {
+                checkSpaces(mix, etalonSize);
+            });
+        }
+
+        return etalonSize;
+    };
+
+
+    var checkContent = (objectToCheck, json, etalonSize) => {
+        try {
+            checkSpacesAndIndents(objectToCheck, etalonSize);
+        } catch(e) {
+            const errorCode = e.message.split('.')[1];
+            return [{
+                ...errorCode ? errorCodes$1[errorCode] : {},
+                location: calculateLocation(objectToCheck, json),
+            }]
+        }
+
+        return [];
+    };
+
+    var checkFooter = (json) => {
+
+        return [];
+    };
+
+    var checkHeader = (json) => {
+
+        return [];
+    };
+
+    const checkBlockMods = (block) => block.mods && block.mods.size;
 
     const checkBlockContent = (block, etalonSize) => {
-        if(checkBlockMods(block)) {
+        if (checkBlockMods(block)) {
             if (!etalonSize) {
                 return block.mods.size;
-            } else if (!isSizeRight(block.mods.size, etalonSize)){
-                throw new Error();
+            } else if (!isSizeRight(block.mods.size, etalonSize)) {
+                throw new Error(etalonSize);
             }
         }
 
-        if(block.content) {
+        if (block.content) {
             etalonSize = checkContentSizes(block.content, etalonSize);
         }
 
@@ -219,7 +276,7 @@
 
     const checkContentSizes = (content, rightSize = null) => {
         let etalonSize = rightSize;
-        
+
         if (Array.isArray(content)) {
             content.forEach((item) => {
                 etalonSize = checkBlockContent(item, etalonSize);
@@ -231,28 +288,37 @@
         return etalonSize;
     };
 
-    var checkInput = (objectToCheck, json) => {
+    var checkSizesAndGetEtalon = (objectToCheck, json) => {
+        let etalonSize = null;
         try {
             if (objectToCheck.content) {
-                checkContentSizes(objectToCheck.content);
+                etalonSize = checkContentSizes(objectToCheck.content);
             }
-        } catch(e) {
-            return [{
-                ...errorCodes$1.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL,
-                location: calculateLocation(objectToCheck, json),
-            }]
+        } catch (e) {
+            etalonSize = e.message;
+            return {
+                sizeErrors: [{
+                    ...errorCodes$1.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL,
+                    location: calculateLocation(objectToCheck, json),
+                }],
+                etalonSize
+            }
         }
 
-        return [];
+        return { sizeErrors: [], etalonSize };
     };
 
-    const checkBlockForm = (objToCheck, json) => {
+    const checkBlockForm = (obj, json) => {
         const errors = [];
+        
+        const { sizeErrors, etalonSize } = checkSizesAndGetEtalon(obj, json);
+        errors.push(...sizeErrors);
 
-        errors.push(...checkContent());
+        if (checkBlockByName(obj, 'content')) {
+            errors.push(...checkContent(obj, json, etalonSize));
+        }
         errors.push(...checkFooter());
         errors.push(...checkHeader());
-        errors.push(...checkInput(objToCheck, json));
         
         return errors;
     };
