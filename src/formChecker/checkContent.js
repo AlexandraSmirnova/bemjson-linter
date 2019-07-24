@@ -1,25 +1,51 @@
-import errorCodes from "./errorCodes";
+import { errorCodes, FormError } from "./errorCodes";
 import { calculateLocation } from "../utils/jsonUtils";
 import { makeBranches } from "../utils/treeUtils";
-import { isSpaceVRight, getSpaceV, getSpaceH, isSpaceHRight } from "./sizeHelpers";
+import { isSpaceVRight, getSpaceV, getSpaceH, isSpaceHRight, getIndentB, isIndentBRight } from "./sizeHelpers";
+import { checkBlockByName } from "../utils/searchUtils";
 
-const checkSpaces = (mix, etalonSize) => {
+const checkSpaceV = (mix, etalonSize) => {
     const spaceV = getSpaceV(mix); 
-    const spaceH = getSpaceH(mix); 
     
     if(spaceV && !isSpaceVRight(spaceV, etalonSize)) {
-        throw new Error(errorCodes.CONTENT_VERTICAL_SPACE_IS_INVALID.code);
-    }
-
-    if(spaceH && !isSpaceHRight(spaceH, etalonSize)) {
-        throw new Error(errorCodes.CONTENT_HORIZONTAL_SPACE_IS_INVALID.code);
+        throw new FormError(errorCodes.CONTENT_VERTICAL_SPACE_IS_INVALID);
     }
 }
 
-const checkSpacesAndIndents = (block, etalonSize) => {
+const checkSpaceH = (mix, etalonSize) => {
+    const spaceH = getSpaceH(mix); 
+
+    if(spaceH && !isSpaceHRight(spaceH, etalonSize)) {
+        throw new FormError(errorCodes.CONTENT_HORIZONTAL_SPACE_IS_INVALID);
+    }
+}
+
+const checkIndentB = (block, json, etalonSize) => {
+    makeBranches(block.mix, (mix) => {
+        const indentB = getIndentB(mix); 
+
+        if(indentB && !isIndentBRight(indentB, etalonSize)) {
+            throw new FormError(
+                errorCodes.CONTENT_ITEM_INDENT_IS_INVALID,
+                calculateLocation(block, json)
+            );
+        }
+    });
+}
+
+const checkSpacesAndIndents = (block, json, etalonSize) => {
     if(block.mix) {
         makeBranches(block.mix, (mix) => {
-            checkSpaces(mix, etalonSize);
+            checkSpaceV(mix, etalonSize);
+            checkSpaceH(mix, etalonSize);
+        })
+    }
+
+    if (block.content) {
+        makeBranches(block.content, (contentItem) => {
+            if (checkBlockByName(contentItem, 'content-item') && contentItem.mix) {
+                checkIndentB(contentItem, json, etalonSize);
+            } 
         })
     }
 
@@ -29,13 +55,17 @@ const checkSpacesAndIndents = (block, etalonSize) => {
 
 export default (objectToCheck, json, etalonSize) => {
     try {
-        checkSpacesAndIndents(objectToCheck, etalonSize);
+        checkSpacesAndIndents(objectToCheck, json, etalonSize);
     } catch(e) {
-        const errorCode = e.message.split('.')[1];
-        return [{
-            ...errorCode ? errorCodes[errorCode] : {},
-            location: calculateLocation(objectToCheck, json),
-        }]
+        if (e instanceof FormError) {
+            return [{
+                code: e.code,
+                error: e.error,
+                location: e.location ? e.location: calculateLocation(objectToCheck, json) ,
+            }]
+        }
+
+        throw e;
     }
 
     return [];

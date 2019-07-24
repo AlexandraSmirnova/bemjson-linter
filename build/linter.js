@@ -83,7 +83,9 @@
     const checkBlockByName = (obj, blockName) => Boolean(
         obj.block && obj.block === blockName
         || obj.elem && obj.elem === blockName
-        || obj.mix && obj.mix.some((mix) => checkBlockByName(mix, blockName))
+        || obj.mix && (Array.isArray(obj.mix)
+            ? obj.mix.some((mix) => checkBlockByName(mix, blockName))
+            : checkBlockByName(obj.mix, blockName))
     );
 
     const makeBranches = (source, callback) => {
@@ -154,35 +156,50 @@
         return errors;
     };
 
-    const errors$1 = {
-        INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL: 'Подписи и поля должны быть одного размера',
-        CONTENT_VERTICAL_SPACE_IS_INVALID: `Вертикальный внутренний отступ контентного элемента со значением space-v 
-        должен быть на 2 шага больше эталонного размера`,
-        CONTENT_HORIZONTAL_SPACE_IS_INVALID: `Горизонтальный внутренний отступ контентного элемента должен задаваться 
-        с помощью модификатора space-h на 1 шаг больше эталонного размера`,
-        HEADER_TEXT_SIZE_IS_INVALID: `Все текстовые блоки в заголовке формы (элемент header) должны быть со значением 
-        модификатора size на 2 шага больше эталонного размера`,
-        HEADER_VERTICAL_SPACE_IS_INVALID:  "Горизонтальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
-        HEADER_HORIZONTAL_SPACE_IS_INVALID: "Горизонтальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
-        FOOTER_VERTICAL_SPACE_IS_INVALID: "Вертикальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
-        FOOTER_HORIZONTAL_SPACE_IS_INVALID: "Горизонтальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
-        FOOTER_TEXT_SIZE_IS_INVALID: "Размер текстовых блоков в подвале должен соответствовать эталонному"
-    };   
-
-    const createErrorsDict$1 = () => {
-        const errorsDict = {};
-        
-        Object.keys(errors$1).forEach((code) => {
-            errorsDict[code] = {
-                code: `FORM.${code}`,
-                error: errors$1[code],
-            }; 
-        });
-
-        return errorsDict;
+    const errorCodes$1 = {
+        INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL: 'INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL',
+        CONTENT_VERTICAL_SPACE_IS_INVALID: 'CONTENT_VERTICAL_SPACE_IS_INVALID',
+        CONTENT_HORIZONTAL_SPACE_IS_INVALID: 'CONTENT_HORIZONTAL_SPACE_IS_INVALID',
+        HEADER_TEXT_SIZE_IS_INVALID: 'HEADER_TEXT_SIZE_IS_INVALID',
+        CONTENT_ITEM_INDENT_IS_INVALID: 'CONTENT_ITEM_INDENT_IS_INVALID',
+        HEADER_VERTICAL_SPACE_IS_INVALID: 'HEADER_VERTICAL_SPACE_IS_INVALID',
+        HEADER_HORIZONTAL_SPACE_IS_INVALID: 'HEADER_HORIZONTAL_SPACE_IS_INVALID',
+        FOOTER_VERTICAL_SPACE_IS_INVALID: 'FOOTER_VERTICAL_SPACE_IS_INVALID',
+        FOOTER_HORIZONTAL_SPACE_IS_INVALID: 'FOOTER_HORIZONTAL_SPACE_IS_INVALID',
+        FOOTER_TEXT_SIZE_IS_INVALID: 'FOOTER_TEXT_SIZE_IS_INVALID'
     };
 
-    var errorCodes$1 = createErrorsDict$1();
+    const errorMessages = {
+        [errorCodes$1.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL]: 'Подписи и поля должны быть одного размера',
+        [errorCodes$1.CONTENT_VERTICAL_SPACE_IS_INVALID]: `Вертикальный внутренний отступ контентного элемента со значением space-v 
+        должен быть на 2 шага больше эталонного размера`,
+        [errorCodes$1.CONTENT_HORIZONTAL_SPACE_IS_INVALID]: `Горизонтальный внутренний отступ контентного элемента должен задаваться 
+        с помощью модификатора space-h на 1 шаг больше эталонного размера`,
+        [errorCodes$1.CONTENT_ITEM_INDENT_IS_INVALID]: `Модификатора indent-b у элементов формы content-item должен быть на 1 шаг больше эталонного размера`,
+        [errorCodes$1.HEADER_TEXT_SIZE_IS_INVALID]: `Все текстовые блоки в заголовке формы (элемент header) должны быть со значением 
+        модификатора size на 2 шага больше эталонного размера`,
+        [errorCodes$1.HEADER_VERTICAL_SPACE_IS_INVALID]: "Горизонтальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
+        [errorCodes$1.HEADER_HORIZONTAL_SPACE_IS_INVALID]: "Горизонтальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
+        [errorCodes$1.FOOTER_VERTICAL_SPACE_IS_INVALID]: "Вертикальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
+        [errorCodes$1.FOOTER_HORIZONTAL_SPACE_IS_INVALID]: "Горизонтальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
+        [errorCodes$1.FOOTER_TEXT_SIZE_IS_INVALID]: "Размер текстовых блоков в подвале должен соответствовать эталонному"
+    };
+
+    const getErrorInfoByCode = (code) => ({
+        code: `FORM.${code}`,
+        error: errorMessages[code],
+    });
+
+    class FormError extends Error {
+        constructor(code, location = null) {
+            super();
+
+            const errorInfo = getErrorInfoByCode(code);
+            this.code = errorInfo.code;
+            this.error = errorInfo.error;
+            this.location = location;
+        }
+    }
 
     const sizes = ['xxxxs', 'xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxxl'];
 
@@ -194,10 +211,16 @@
         return sizes[index] === spaceV;
     };
 
-    const isSpaceHRight = (spaceV, rightSize) => {
+    const isSpaceHRight = (spaceH, rightSize) => {
         const index = sizes.indexOf(rightSize) + 1;
 
-        return sizes[index] === spaceV;
+        return sizes[index] === spaceH;
+    };
+
+    const isIndentBRight = (indentB, rightSize) => {
+        const index = sizes.indexOf(rightSize) + 1;
+
+        return sizes[index] === indentB;
     };
 
     const getSpaceV = (block) => block.mods && block.mods["space-v"]
@@ -208,23 +231,52 @@
         ? block.mods["space-h"]
         : null;
 
-    const checkSpaces = (mix, etalonSize) => {
+    const getIndentB = (block) => block.mods && block.mods["indent-b"]
+        ? block.mods["indent-b"]
+        : null;
+
+    const checkSpaceV = (mix, etalonSize) => {
         const spaceV = getSpaceV(mix); 
-        const spaceH = getSpaceH(mix); 
         
         if(spaceV && !isSpaceVRight(spaceV, etalonSize)) {
-            throw new Error(errorCodes$1.CONTENT_VERTICAL_SPACE_IS_INVALID.code);
-        }
-
-        if(spaceH && !isSpaceHRight(spaceH, etalonSize)) {
-            throw new Error(errorCodes$1.CONTENT_HORIZONTAL_SPACE_IS_INVALID.code);
+            throw new FormError(errorCodes$1.CONTENT_VERTICAL_SPACE_IS_INVALID);
         }
     };
 
-    const checkSpacesAndIndents = (block, etalonSize) => {
+    const checkSpaceH = (mix, etalonSize) => {
+        const spaceH = getSpaceH(mix); 
+
+        if(spaceH && !isSpaceHRight(spaceH, etalonSize)) {
+            throw new FormError(errorCodes$1.CONTENT_HORIZONTAL_SPACE_IS_INVALID);
+        }
+    };
+
+    const checkIndentB = (block, json, etalonSize) => {
+        makeBranches(block.mix, (mix) => {
+            const indentB = getIndentB(mix); 
+
+            if(indentB && !isIndentBRight(indentB, etalonSize)) {
+                throw new FormError(
+                    errorCodes$1.CONTENT_ITEM_INDENT_IS_INVALID,
+                    calculateLocation(block, json)
+                );
+            }
+        });
+    };
+
+    const checkSpacesAndIndents = (block, json, etalonSize) => {
         if(block.mix) {
             makeBranches(block.mix, (mix) => {
-                checkSpaces(mix, etalonSize);
+                checkSpaceV(mix, etalonSize);
+                checkSpaceH(mix, etalonSize);
+            });
+        }
+
+        if (block.content) {
+            makeBranches(block.content, (contentItem) => {
+                if (checkBlockByName(contentItem, 'content-item') && contentItem.mix) {
+                    checkIndentB(contentItem, json, etalonSize);
+                } 
             });
         }
 
@@ -234,13 +286,17 @@
 
     var checkContent = (objectToCheck, json, etalonSize) => {
         try {
-            checkSpacesAndIndents(objectToCheck, etalonSize);
+            checkSpacesAndIndents(objectToCheck, json, etalonSize);
         } catch(e) {
-            const errorCode = e.message.split('.')[1];
-            return [{
-                ...errorCode ? errorCodes$1[errorCode] : {},
-                location: calculateLocation(objectToCheck, json),
-            }]
+            if (e instanceof FormError) {
+                return [{
+                    code: e.code,
+                    error: e.error,
+                    location: e.location ? e.location: calculateLocation(objectToCheck, json) ,
+                }]
+            }
+
+            throw e;
         }
 
         return [];
@@ -298,7 +354,7 @@
             etalonSize = e.message;
             return {
                 sizeErrors: [{
-                    ...errorCodes$1.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL,
+                    ...getErrorInfoByCode(errorCodes$1.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL),
                     location: calculateLocation(objectToCheck, json),
                 }],
                 etalonSize

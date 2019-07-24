@@ -1,6 +1,6 @@
 import { formLinter } from '.';
-import errorCodes from './errorCodes';
-import { invalidSpaceJson1, invalidSpaceJson2, invalidSpaceJson3, invalidSpaceJson4 } from './__mocks__/invalidJson';
+import { getErrorInfoByCode, errorCodes } from './errorCodes';
+import { invalidSpaceJson1, invalidSpaceJson2, invalidSpaceJson3, invalidSpaceJson4, invalidIndentJson1, invalidIndentJson2 } from './__mocks__/invalidJson';
 
 
 describe('test form linter', () => {
@@ -35,7 +35,7 @@ describe('test form linter', () => {
     ])('should return error FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL for %p', (content, location) => {
         const obj = { block: "form", content };
         const expected = [{
-            ...errorCodes.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL,
+            ...getErrorInfoByCode(errorCodes.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL),
             location
         }];
 
@@ -59,7 +59,7 @@ describe('test form linter', () => {
         ]
     ])('should return error FORM.CONTENT_VERTICAL_SPACE_IS_INVALID %#', (json, location) => {
         const expected = [{
-            ...errorCodes.CONTENT_VERTICAL_SPACE_IS_INVALID,
+            ...getErrorInfoByCode(errorCodes.CONTENT_VERTICAL_SPACE_IS_INVALID),
             location
         }];
         expect(formLinter(JSON.parse(json), json)).toEqual(expected);
@@ -82,7 +82,30 @@ describe('test form linter', () => {
         ]
     ])('should return error FORM.CONTENT_HORIZONTAL_SPACE_IS_INVALID %#', (json, location) => {
         const expected = [{
-            ...errorCodes.CONTENT_HORIZONTAL_SPACE_IS_INVALID,
+            ...getErrorInfoByCode(errorCodes.CONTENT_HORIZONTAL_SPACE_IS_INVALID),
+            location
+        }];
+        expect(formLinter(JSON.parse(json), json)).toEqual(expected);
+    });
+
+    test.each([
+        [
+            invalidIndentJson1,
+            {
+                start: { column: 13, line: 7 },
+                end: { column: 14, line: 12 }
+            },
+        ],
+        [
+            invalidIndentJson2,
+            {
+                start: { column: 13, line: 7 },
+                end: { column: 14, line: 12 }
+            },
+        ]
+    ])('should return error FORM.CONTENT_ITEM_INDENT_IS_INVALID %#', (json, location) => {
+        const expected = [{
+            ...getErrorInfoByCode(errorCodes.CONTENT_ITEM_INDENT_IS_INVALID),
             location
         }];
         expect(formLinter(JSON.parse(json), json)).toEqual(expected);

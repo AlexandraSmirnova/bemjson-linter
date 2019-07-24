@@ -8,10 +8,16 @@ export const isSpaceVRight = (spaceV, rightSize) => {
     return sizes[index] === spaceV;
 };
 
-export const isSpaceHRight = (spaceV, rightSize) => {
+export const isSpaceHRight = (spaceH, rightSize) => {
     const index = sizes.indexOf(rightSize) + 1;
 
-    return sizes[index] === spaceV;
+    return sizes[index] === spaceH;
+};
+
+export const isIndentBRight = (indentB, rightSize) => {
+    const index = sizes.indexOf(rightSize) + 1;
+
+    return sizes[index] === indentB;
 };
 
 export const getSpaceV = (block) => block.mods && block.mods["space-v"]
@@ -20,4 +26,8 @@ export const getSpaceV = (block) => block.mods && block.mods["space-v"]
 
 export const getSpaceH = (block) => block.mods && block.mods["space-h"]
     ? block.mods["space-h"]
+    : null;
+
+export const getIndentB = (block) => block.mods && block.mods["indent-b"]
+    ? block.mods["indent-b"]
     : null;

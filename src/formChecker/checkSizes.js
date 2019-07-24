@@ -1,4 +1,4 @@
-import errorCodes from "./errorCodes";
+import { errorCodes, getErrorInfoByCode } from "./errorCodes";
 import { calculateLocation } from "../utils/jsonUtils";
 import { isSizeRight } from "./sizeHelpers";
 
@@ -44,7 +44,7 @@ export default (objectToCheck, json) => {
         etalonSize = e.message;
         return {
             sizeErrors: [{
-                ...errorCodes.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL,
+                ...getErrorInfoByCode(errorCodes.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL),
                 location: calculateLocation(objectToCheck, json),
             }],
             etalonSize
