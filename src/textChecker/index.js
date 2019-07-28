@@ -1,11 +1,11 @@
-import { checkH1Header, isH1Header,  isH2Header, isHeader, getH2Headers, getH3Headers } from "./checkHeaders";
+import { checkH1Header, isH1Header, isH2Header, isHeader, getH2Headers, getH3Headers } from "./checkHeaders";
 import errorCodes from "./errorCodes";
-import { calculateLocation } from "../utils/jsonUtils";
-import { checkBlockByName } from "../utils/searchUtils";
+import calculateLocation from "../utils/calculateLocation";
+import { checkBlockByName } from "../utils/checkUtils";
 import { makeBranches } from "../utils/treeUtils";
 
-const getLastStartLine  = (headers) => headers.length > 0 
-    ? headers[headers.length - 1].location.start.line + 1: 0;
+const getLastStartLine = (headers) => headers.length > 0
+    ? headers[headers.length - 1].location.start.line + 1 : 0;
 
 const checkBlockText = (objToCheck, json, headers) => {
     const errors = [];
@@ -39,7 +39,7 @@ const checkBlockText = (objToCheck, json, headers) => {
                 })
             })
         }
-    } 
+    }
 
     return errors;
 }
@@ -49,7 +49,7 @@ export const textLinter = (obj, json, headers = []) => {
 
     if (checkBlockByName(obj, 'text') && isHeader(obj)) {
         errors.push(...checkBlockText(obj, json, headers));
-        headers.push({ 
+        headers.push({
             type: obj.mods.type,
             location: calculateLocation(obj, json, getLastStartLine(headers)),
         });

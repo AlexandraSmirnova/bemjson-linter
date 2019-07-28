@@ -5,8 +5,8 @@ const textTypes = {
     P: 'p'
 }
 
-export const isHeader = (block) => block && block.mods 
-    && block.mods.type 
+export const isHeader = (block) => block && block.mods
+    && block.mods.type
     && block.mods.type !== textTypes.P;
 
 export const isH1Header = (type) => type === textTypes.H1;

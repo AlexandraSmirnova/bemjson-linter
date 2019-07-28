@@ -2,14 +2,14 @@ import checkContent from "./checkContent";
 import checkFooter from "./checkFooter";
 import checkHeader from "./checkHeader";
 import checkSizesAndGetEtalon from "./checkSizes";
-import { checkBlockByName } from "../utils/searchUtils";
+import { checkBlockByName } from "../utils/checkUtils";
 import { makeBranches } from "../utils/treeUtils";
 
 let etalon = null;
 
 const checkBlockForm = (obj, json) => {
     const errors = [];
-    
+
     const { sizeErrors, etalonSize } = checkSizesAndGetEtalon(obj, json);
 
     if (etalonSize) {
@@ -22,7 +22,7 @@ const checkBlockForm = (obj, json) => {
     if (checkBlockByName(obj, 'header')) {
         errors.push(...checkHeader(obj, json, etalon));
     }
-    if (checkBlockByName(obj, 'footer')) {        
+    if (checkBlockByName(obj, 'footer')) {
         errors.push(...checkFooter(obj, json, etalon));
     }
 
@@ -32,11 +32,11 @@ const checkBlockForm = (obj, json) => {
 export const formLinter = (obj, json) => {
     const errors = [];
 
-    if(checkBlockByName(obj, 'form')) {
+    if (checkBlockByName(obj, 'form')) {
         errors.push(...checkBlockForm(obj, json));
     }
 
-    if(obj.content) {
+    if (obj.content) {
         makeBranches(obj.content, (item) => {
             errors.push(...formLinter(item, json))
         })

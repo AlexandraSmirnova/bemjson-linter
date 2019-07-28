@@ -5,9 +5,9 @@ import errorCodes from "./errorCodes";
 describe('test text linter', () => {
     test.each([
         [
-            invalindBemjson.json1, 
+            invalindBemjson.json1,
             {
-                start: {column: 9, line: 8},
+                start: { column: 9, line: 8 },
                 end: { column: 10, line: 11 }
             }
         ],
@@ -21,9 +21,9 @@ describe('test text linter', () => {
 
     test.each([
         [
-            invalindBemjson.json2, 
+            invalindBemjson.json2,
             {
-                start: {column: 9, line: 4},
+                start: { column: 9, line: 4 },
                 end: { column: 10, line: 7 }
             }
         ],
@@ -37,9 +37,9 @@ describe('test text linter', () => {
 
     test.each([
         [
-            invalindBemjson.json3, 
+            invalindBemjson.json3,
             {
-                start: {column: 9, line: 4},
+                start: { column: 9, line: 4 },
                 end: { column: 10, line: 7 }
             }
         ],
@@ -52,14 +52,14 @@ describe('test text linter', () => {
     })
 
     test.each([
-        { block: 'test'},
+        { block: 'test' },
         {
             block: "form",
             content: [
                 { block: "text", mods: { size: "l" } },
                 { block: "input", mods: { size: "l" } },
             ]
- 
+
         }
 
     ])('should return array without errors for %p %#', (obj) => {

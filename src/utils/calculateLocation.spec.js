@@ -1,4 +1,4 @@
-import { calculateLocation } from "./jsonUtils";
+import calculateLocation from "./calculateLocation";
 
 
 const mockJson1 = `{

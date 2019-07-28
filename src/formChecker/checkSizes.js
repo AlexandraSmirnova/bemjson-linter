@@ -1,8 +1,7 @@
 import { errorCodes, getErrorInfoByCode } from "./errorCodes";
-import { calculateLocation } from "../utils/jsonUtils";
-import { isSizeRight, getBlockMod } from "./sizeHelpers";
+import calculateLocation from "../utils/calculateLocation";
 import { makeBranches } from "../utils/treeUtils";
-import { checkBlockByName } from "../utils/searchUtils";
+import { checkBlockByName, getBlockMod, compareWithEtalonSize } from "../utils/checkUtils";
 
 const checkBlockContent = (block, etalonSize) => {
     const itemSize = getBlockMod(block, 'size');
@@ -10,7 +9,7 @@ const checkBlockContent = (block, etalonSize) => {
     if (itemSize) {
         if (!etalonSize) {
             return itemSize;
-        } else if (!isSizeRight(itemSize, etalonSize)) {
+        } else if (!compareWithEtalonSize(itemSize, etalonSize)) {
             throw new Error(etalonSize);
         }
     }

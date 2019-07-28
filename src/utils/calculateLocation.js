@@ -1,4 +1,4 @@
-export const calculateLocation = (errorBlock, json, lineStart = 0) => {
+export default (errorBlock, json, lineStart = 0) => {
     const rows = json.split('\n');
     const searchedJson = JSON.stringify(errorBlock);
 

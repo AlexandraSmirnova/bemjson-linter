@@ -11,8 +11,8 @@
         P: 'p'
     };
 
-    const isHeader = (block) => block && block.mods 
-        && block.mods.type 
+    const isHeader = (block) => block && block.mods
+        && block.mods.type
         && block.mods.type !== textTypes.P;
 
     const isH1Header = (type) => type === textTypes.H1;
@@ -27,7 +27,7 @@
         SEVERAL_H1: 'Несколько заголовков H1',
         INVALID_H2_POSITION: 'H2 не может следовать перед H1',
         INVALID_H3_POSITION: 'H3 не может следовать перед H2',
-    };   
+    };
 
     const createErrorsDict = () => {
         const errorsDict = {};
@@ -35,7 +35,7 @@
             errorsDict[code] = {
                 code: `TEXT.${code}`,
                 error: errors[code],
-            }; 
+            };
         });
 
         return errorsDict;
@@ -43,7 +43,7 @@
 
     var errorCodes = createErrorsDict();
 
-    const calculateLocation = (errorBlock, json, lineStart = 0) => {
+    var calculateLocation = (errorBlock, json, lineStart = 0) => {
         const rows = json.split('\n');
         const searchedJson = JSON.stringify(errorBlock);
 
@@ -80,6 +80,18 @@
         }
     };
 
+    const sizes = ['xxxxs', 'xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxxl'];
+
+    const compareWithEtalonSize = (value, etalonSize, step = 0) => {
+        const index = sizes.indexOf(etalonSize) + step;
+
+        return sizes[index] === value;
+    };
+
+    const getBlockMod = (block, modName) => block.mods && block.mods[modName]
+        ? block.mods[modName]
+        : null;
+
     const checkBlockByName = (obj, blockName) => Boolean(
         obj.block && obj.block === blockName
         || obj.elem && obj.elem === blockName
@@ -101,8 +113,8 @@
         }
     };
 
-    const getLastStartLine  = (headers) => headers.length > 0 
-        ? headers[headers.length - 1].location.start.line + 1: 0;
+    const getLastStartLine = (headers) => headers.length > 0
+        ? headers[headers.length - 1].location.start.line + 1 : 0;
 
     const checkBlockText = (objToCheck, json, headers) => {
         const errors = [];
@@ -136,7 +148,7 @@
                     });
                 });
             }
-        } 
+        }
 
         return errors;
     };
@@ -146,7 +158,7 @@
 
         if (checkBlockByName(obj, 'text') && isHeader(obj)) {
             errors.push(...checkBlockText(obj, json, headers));
-            headers.push({ 
+            headers.push({
                 type: obj.mods.type,
                 location: calculateLocation(obj, json, getLastStartLine(headers)),
             });
@@ -206,58 +218,27 @@
         }
     }
 
-    const sizes = ['xxxxs', 'xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxxl'];
-
-    // заменить на функцию compareWithEtalonSize
-    const isSizeRight = (size, rightSize, step = 0) => {
-        const index = sizes.indexOf(rightSize) + step;
-
-        return sizes[index] === size;
-    };
-
-    const isSpaceVRight = (spaceV, rightSize, step = 0) => {
-        const index = sizes.indexOf(rightSize) + step;
-
-        return sizes[index] === spaceV;
-    };
-
-    const isSpaceHRight = (spaceH, rightSize, step = 0) => {
-        const index = sizes.indexOf(rightSize) + step;
-
-        return sizes[index] === spaceH;
-    };
-
-    const isIndentBRight = (indentB, rightSize, step = 0) => {
-        const index = sizes.indexOf(rightSize) + step;
-
-        return sizes[index] === indentB;
-    };
-
-    const getBlockMod = (block, modName) => block.mods && block.mods[modName]
-        ? block.mods[modName]
-        : null;
-
     const checkSpaceV = (mix, etalonSize) => {
-        const spaceV = getBlockMod(mix, 'space-v'); 
-        
-        if(spaceV && !isSpaceVRight(spaceV, etalonSize, 2)) {
+        const spaceV = getBlockMod(mix, 'space-v');
+
+        if (spaceV && !compareWithEtalonSize(spaceV, etalonSize, 2)) {
             throw new FormError(errorCodes$1.CONTENT_VERTICAL_SPACE_IS_INVALID);
         }
     };
 
     const checkSpaceH = (mix, etalonSize) => {
-        const spaceH = getBlockMod(mix, 'space-h'); 
+        const spaceH = getBlockMod(mix, 'space-h');
 
-        if(spaceH && !isSpaceHRight(spaceH, etalonSize, 1)) {
+        if (spaceH && !compareWithEtalonSize(spaceH, etalonSize, 1)) {
             throw new FormError(errorCodes$1.CONTENT_HORIZONTAL_SPACE_IS_INVALID);
         }
     };
 
     const checkIndentB = (block, json, etalonSize) => {
         makeBranches(block.mix, (mix) => {
-            const indentB = getBlockMod(mix, 'indent-b'); 
+            const indentB = getBlockMod(mix, 'indent-b');
 
-            if(indentB && !isIndentBRight(indentB, etalonSize, 1)) {
+            if (indentB && !compareWithEtalonSize(indentB, etalonSize, 1)) {
                 throw new FormError(
                     errorCodes$1.CONTENT_ITEM_INDENT_IS_INVALID,
                     calculateLocation(block, json)
@@ -267,7 +248,7 @@
     };
 
     const checkSpacesAndIndents = (block, json, etalonSize) => {
-        if(block.mix) {
+        if (block.mix) {
             makeBranches(block.mix, (mix) => {
                 checkSpaceV(mix, etalonSize);
                 checkSpaceH(mix, etalonSize);
@@ -278,7 +259,7 @@
             makeBranches(block.content, (contentItem) => {
                 if (checkBlockByName(contentItem, 'content-item') && contentItem.mix) {
                     checkIndentB(contentItem, json, etalonSize);
-                } 
+                }
             });
         }
 
@@ -289,12 +270,12 @@
     var checkContent = (objectToCheck, json, etalonSize) => {
         try {
             checkSpacesAndIndents(objectToCheck, json, etalonSize);
-        } catch(e) {
+        } catch (e) {
             if (e instanceof FormError) {
                 return [{
                     code: e.code,
                     error: e.error,
-                    location: e.location ? e.location: calculateLocation(objectToCheck, json) ,
+                    location: e.location ? e.location : calculateLocation(objectToCheck, json),
                 }]
             }
 
@@ -305,9 +286,9 @@
     };
 
     const checkSpaceV$1 = (block, etalonSize) => {
-        const spaceV = getBlockMod(block, 'space-v'); 
-        
-        if(spaceV && !isSpaceVRight(spaceV, etalonSize)) {
+        const spaceV = getBlockMod(block, 'space-v');
+
+        if (spaceV && !compareWithEtalonSize(spaceV, etalonSize)) {
             throw new FormError(
                 errorCodes$1.FOOTER_VERTICAL_SPACE_IS_INVALID,
             );
@@ -315,9 +296,9 @@
     };
 
     const checkSpaceH$1 = (block, etalonSize) => {
-        const spaceH = getBlockMod(block, 'space-h'); 
+        const spaceH = getBlockMod(block, 'space-h');
 
-        if(spaceH && !isSpaceHRight(spaceH, etalonSize, 1)) {
+        if (spaceH && !compareWithEtalonSize(spaceH, etalonSize, 1)) {
             throw new FormError(
                 errorCodes$1.FOOTER_HORIZONTAL_SPACE_IS_INVALID,
             );
@@ -325,9 +306,9 @@
     };
 
     const checkTextSize = (block, json, etalonSize) => {
-        const blockSize = getBlockMod(block, 'size'); 
+        const blockSize = getBlockMod(block, 'size');
 
-        if(blockSize && !isSizeRight(blockSize, etalonSize)) {
+        if (blockSize && !compareWithEtalonSize(blockSize, etalonSize)) {
             throw new FormError(
                 errorCodes$1.FOOTER_TEXT_SIZE_IS_INVALID,
                 calculateLocation(block, json)
@@ -336,9 +317,9 @@
     };
 
     const checkHeaderRules = (block, json, etalonSize) => {
-        if(block.mix) {
+        if (block.mix) {
             makeBranches(block.mix, (mix) => {
-                if (checkBlockByName(mix, 'item') && mix.mods) {            
+                if (checkBlockByName(mix, 'item') && mix.mods) {
                     checkSpaceV$1(mix, etalonSize);
                     checkSpaceH$1(mix, etalonSize);
                 }
@@ -349,7 +330,7 @@
             makeBranches(block.content, (contentItem) => {
                 if (checkBlockByName(contentItem, 'text') && contentItem.mods) {
                     checkTextSize(contentItem, json, etalonSize);
-                } 
+                }
             });
         }
 
@@ -360,12 +341,12 @@
     var checkFooter = (objectToCheck, json, etalonSize) => {
         try {
             checkHeaderRules(objectToCheck, json, etalonSize);
-        } catch(e) {
+        } catch (e) {
             if (e instanceof FormError) {
                 return [{
                     code: e.code,
                     error: e.error,
-                    location: e.location ? e.location: calculateLocation(objectToCheck, json) ,
+                    location: e.location ? e.location : calculateLocation(objectToCheck, json),
                 }]
             }
 
@@ -376,9 +357,9 @@
     };
 
     const checkSpaceV$2 = (block, etalonSize) => {
-        const spaceV = getBlockMod(block, 'space-v'); 
-        
-        if(spaceV && !isSpaceVRight(spaceV, etalonSize)) {
+        const spaceV = getBlockMod(block, 'space-v');
+
+        if (spaceV && !compareWithEtalonSize(spaceV, etalonSize)) {
             throw new FormError(
                 errorCodes$1.HEADER_VERTICAL_SPACE_IS_INVALID,
             );
@@ -386,9 +367,9 @@
     };
 
     const checkSpaceH$2 = (block, etalonSize) => {
-        const spaceH = getBlockMod(block, 'space-h'); 
+        const spaceH = getBlockMod(block, 'space-h');
 
-        if(spaceH && !isSpaceHRight(spaceH, etalonSize, 1)) {
+        if (spaceH && !compareWithEtalonSize(spaceH, etalonSize, 1)) {
             throw new FormError(
                 errorCodes$1.HEADER_HORIZONTAL_SPACE_IS_INVALID,
             );
@@ -396,9 +377,9 @@
     };
 
     const checkTextSize$1 = (block, json, etalonSize) => {
-        const blockSize = getBlockMod(block, 'size'); 
+        const blockSize = getBlockMod(block, 'size');
 
-        if(blockSize && !isSizeRight(blockSize, etalonSize, 2)) {
+        if (blockSize && !compareWithEtalonSize(blockSize, etalonSize, 2)) {
             throw new FormError(
                 errorCodes$1.HEADER_TEXT_SIZE_IS_INVALID,
                 calculateLocation(block, json)
@@ -407,9 +388,9 @@
     };
 
     const checkHeaderRules$1 = (block, json, etalonSize) => {
-        if(block.mix) {
+        if (block.mix) {
             makeBranches(block.mix, (mix) => {
-                if (checkBlockByName(mix, 'item') && mix.mods) {            
+                if (checkBlockByName(mix, 'item') && mix.mods) {
                     checkSpaceV$2(mix, etalonSize);
                     checkSpaceH$2(mix, etalonSize);
                 }
@@ -420,7 +401,7 @@
             makeBranches(block.content, (contentItem) => {
                 if (checkBlockByName(contentItem, 'text') && contentItem.mods) {
                     checkTextSize$1(contentItem, json, etalonSize);
-                } 
+                }
             });
         }
 
@@ -431,12 +412,12 @@
     var checkHeader = (objectToCheck, json, etalonSize) => {
         try {
             checkHeaderRules$1(objectToCheck, json, etalonSize);
-        } catch(e) {
+        } catch (e) {
             if (e instanceof FormError) {
                 return [{
                     code: e.code,
                     error: e.error,
-                    location: e.location ? e.location: calculateLocation(objectToCheck, json) ,
+                    location: e.location ? e.location : calculateLocation(objectToCheck, json),
                 }]
             }
 
@@ -452,7 +433,7 @@
         if (itemSize) {
             if (!etalonSize) {
                 return itemSize;
-            } else if (!isSizeRight(itemSize, etalonSize)) {
+            } else if (!compareWithEtalonSize(itemSize, etalonSize)) {
                 throw new Error(etalonSize);
             }
         }
@@ -497,7 +478,7 @@
 
     const checkBlockForm = (obj, json) => {
         const errors = [];
-        
+
         const { sizeErrors, etalonSize } = checkSizesAndGetEtalon(obj, json);
 
         if (etalonSize) {
@@ -510,7 +491,7 @@
         if (checkBlockByName(obj, 'header')) {
             errors.push(...checkHeader(obj, json, etalon));
         }
-        if (checkBlockByName(obj, 'footer')) {        
+        if (checkBlockByName(obj, 'footer')) {
             errors.push(...checkFooter(obj, json, etalon));
         }
 
@@ -520,11 +501,11 @@
     const formLinter = (obj, json) => {
         const errors = [];
 
-        if(checkBlockByName(obj, 'form')) {
+        if (checkBlockByName(obj, 'form')) {
             errors.push(...checkBlockForm(obj, json));
         }
 
-        if(obj.content) {
+        if (obj.content) {
             makeBranches(obj.content, (item) => {
                 errors.push(...formLinter(item, json));
             });

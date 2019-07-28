@@ -1,4 +1,4 @@
-import { checkBlockByName } from "./searchUtils";
+import { checkBlockByName } from "./checkUtils";
 
 
 describe('test checkBlockByName', () => {
