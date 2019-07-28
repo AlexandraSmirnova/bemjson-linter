@@ -1,4 +1,4 @@
-const sizes = ['xxxxs', 'xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxxl'];
+const sizes = ['xxxxxs', 'xxxxs', 'xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxxl', 'xxxxxl'];
 
 export const compareWithEtalonSize = (value, etalonSize, step = 0) => {
     const index = sizes.indexOf(etalonSize) + step;

@@ -14,7 +14,7 @@ const checkBlockContent = (block, etalonSize) => {
         }
     }
 
-    return checkContentSizes(block, etalonSize);
+    return etalonSize;
 }
 
 const checkContentSizes = (block, rightSize = null) => {
@@ -26,6 +26,7 @@ const checkContentSizes = (block, rightSize = null) => {
             if (elemsToCheck.some((elem) => checkBlockByName(block, elem) || checkBlockByName(item, elem))) {
                 etalonSize = checkBlockContent(item, etalonSize);
             }
+            etalonSize = checkContentSizes(item, etalonSize);
         });
     }
 
@@ -36,6 +37,9 @@ export default (objectToCheck, json) => {
     let etalonSize = null;
     try {
         etalonSize = checkContentSizes(objectToCheck);
+        if (!etalonSize) {
+            throw new Error();
+        }
     } catch (e) {
         etalonSize = e.message;
         return {

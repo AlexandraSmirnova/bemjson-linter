@@ -1,3 +1,40 @@
+export const invalidSizeJson1 = `{ 
+    "block": "form",
+    "content":  [
+        {
+            "block": "form",
+            "elem": "label",
+            "content": {
+                "block": "text",
+                "mods": { "size": "l" }
+            }
+        },
+        { 
+            "block": "input", 
+            "mods": { "size": "s" }
+        }
+    ]
+}`;
+
+export const invalidSizeJson2 = `{ 
+    "block": "form",
+    "content": [
+        { "block": "input", "mods": { "size": "s" } },
+        { "block": "input", "mods": { "size": "m" } }
+    ]
+}`;
+
+export const invalidSizeJson3 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "form",
+            "elem": "header",
+            "mix": [ { "block": "form", "elem": "item", "mods": { "space-h": "xl" } } ]
+        }
+    ]
+}`;
+
 export const invalidSpaceJson1 = `{
     "block": "form",
     "content": {
@@ -6,8 +43,7 @@ export const invalidSpaceJson1 = `{
         "content": { "block": "input", "mods": { "size": "l" } },
         "mix": [{ "block": "form", "elem": "item", "mods": {  "space-v": "xl" } }]
     }
-}
-`
+}`;
 
 export const invalidSpaceJson2 = `{
     "block": "form",
@@ -17,8 +53,7 @@ export const invalidSpaceJson2 = `{
         "content": { "block": "input", "mods": { "size": "l" } },
         "mix": [{ "block": "form", "elem": "item", "mods": {  "space-v": "m" } }]
     }
-}
-`
+}`;
 
 export const invalidSpaceJson3 = `{
     "block": "form",
@@ -28,8 +63,7 @@ export const invalidSpaceJson3 = `{
         "content": { "block": "input", "mods": { "size": "l" } },
         "mix": [{ "block": "form", "elem": "item", "mods": {  "space-h": "xxl" } }]
     }
-}
-`
+}`;
 
 export const invalidSpaceJson4 = `{
     "block": "form",
@@ -39,7 +73,7 @@ export const invalidSpaceJson4 = `{
         "content": { "block": "input", "mods": { "size": "l" } },
         "mix": [{ "block": "form", "elem": "item", "mods": { "size": "l", "space-h": "s" } }]
     }
-}`
+}`;
 
 export const invalidIndentJson1 = `{
     "block": "form",
@@ -60,8 +94,7 @@ export const invalidIndentJson1 = `{
             }
         ]
     }
-}
-`
+}`;
 
 export const invalidIndentJson2 = `{
     "block": "form",
@@ -77,8 +110,7 @@ export const invalidIndentJson2 = `{
             }
         ]
     }
-}
-`
+}`;
 
 export const invalidHeaderJson1 = `{
     "block": "form",
@@ -100,7 +132,7 @@ export const invalidHeaderJson1 = `{
             }
         }
     ]
-}`
+}`;
 
 export const invalidHeaderJson2 = `{
     "block": "form",
@@ -130,7 +162,7 @@ export const invalidHeaderJson2 = `{
             }
         }
     ]
-}`
+}`;
 
 export const invalidHeaderJson3 = `{
     "block": "form",
@@ -147,7 +179,7 @@ export const invalidHeaderJson3 = `{
             }
         }
     ]
-}`
+}`;
 
 export const invalidHeaderJson4 = `{
     "block": "form",
@@ -164,7 +196,7 @@ export const invalidHeaderJson4 = `{
             }
         }
     ]
-}`
+}`;
 
 export const invalidHeaderJson5 = `{
     "block": "form",
@@ -181,7 +213,7 @@ export const invalidHeaderJson5 = `{
             }
         }
     ]
-}`
+}`;
 
 export const invalidHeaderJson6 = `{
     "block": "form",
@@ -198,7 +230,7 @@ export const invalidHeaderJson6 = `{
             }
         }
     ]
-}`
+}`;
 
 export const invalidFooterJson1 = `{
     "block": "form",
@@ -215,7 +247,7 @@ export const invalidFooterJson1 = `{
             "mix": { "block": "form", "elem": "item", "mods": { "space-v": "xxl" } }
         }
     ]
-}`
+}`;
 
 export const invalidFooterJson2 = `{
     "block": "form",
@@ -232,7 +264,7 @@ export const invalidFooterJson2 = `{
             "mix": [{ "block": "form", "elem": "item", "mods": { "space-v": "s" } }]
         }
     ]
-}`
+}`;
 
 export const invalidFooterJson3 = `{
     "block": "form",
@@ -249,7 +281,7 @@ export const invalidFooterJson3 = `{
             "mix": { "block": "form", "elem": "item", "mods": { "space-h": "xxl" } }
         }
     ]
-}`
+}`;
 
 export const invalidFooterJson4 = `{
     "block": "form",
@@ -266,7 +298,7 @@ export const invalidFooterJson4 = `{
             "mix": [{ "block": "form", "elem": "item", "mods": { "space-h": "s" } }]
         }
     ]
-}`
+}`;
 
 export const invalidFooterJson5 = `{
     "block": "form",
@@ -290,7 +322,7 @@ export const invalidFooterJson5 = `{
             ]
         }
     ]
-}`
+}`;
 
 export const invalidFooterJson6 = `{
     "block": "form",
@@ -312,4 +344,4 @@ export const invalidFooterJson6 = `{
             }
         }
     ]
-}`
+}`;

@@ -1,45 +1,22 @@
 import { formLinter } from '.';
-import { getErrorInfoByCode, errorCodes } from './errorCodes';
-import { invalidSpaceJson1, invalidSpaceJson2, invalidSpaceJson3, invalidSpaceJson4, invalidIndentJson1, invalidIndentJson2, invalidHeaderJson1, invalidHeaderJson2, invalidHeaderJson3, invalidHeaderJson4, invalidHeaderJson5, invalidHeaderJson6, invalidFooterJson1, invalidFooterJson2, invalidFooterJson3, invalidFooterJson4, invalidFooterJson5, invalidFooterJson6 } from './__mocks__/invalidJson';
-
+import {
+    invalidSpaceJson1, invalidSpaceJson2, invalidSpaceJson3, invalidSpaceJson4,
+    invalidIndentJson1, invalidIndentJson2, invalidHeaderJson1, invalidHeaderJson2, invalidHeaderJson3,
+    invalidHeaderJson4, invalidHeaderJson5, invalidHeaderJson6, invalidFooterJson1, invalidFooterJson2,
+    invalidFooterJson3, invalidFooterJson4, invalidFooterJson5, invalidFooterJson6, invalidSizeJson1, invalidSizeJson2, invalidSizeJson3
+} from './__mocks__/invalidJsons';
+import {
+    validJson1, validJson2, validJson3, validJson4, validJson5, validJson6, validJson7, validJson8,
+    validJson9, validJson10
+} from './__mocks__/validJsons';
 
 describe('test form linter', () => {
     test.each([
-        [
-            [
-                {
-                    block: "form",
-                    elem: "label",
-                    content: {
-                        block: "text",
-                        mods: { "size": "l" }
-                    }
-                },
-                { block: "input", mods: { size: "s" } }
-            ],
-            {
-                start: { column: 1, line: 1 },
-                end: { column: 2, line: 21 }
-            }
-        ],
-        [
-            [
-                { block: "input", mods: { size: "s" } },
-                { block: "input", mods: { size: "m" } }
-            ],
-            {
-                start: { column: 1, line: 1 },
-                end: { column: 2, line: 17 }
-            }
-        ]
-    ])('should return error FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL for %p', (content, location) => {
-        const obj = { block: "form", content };
-        const expected = [{
-            ...getErrorInfoByCode(errorCodes.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL),
-            location
-        }];
-
-        expect(formLinter(obj, JSON.stringify(obj, null, ' '))).toEqual(expected);
+        invalidSizeJson1,
+        invalidSizeJson2,
+        invalidSizeJson3
+    ])('should return error FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL for %#', (json) => {
+        expect(formLinter(JSON.parse(json), json)).toMatchSnapshot();
     })
 
     test.each([
@@ -106,17 +83,17 @@ describe('test form linter', () => {
     });
 
     test.each([
-        { block: 'test' },
-        {
-            block: "form",
-            content: [
-                { block: "text", mods: { size: "l" } },
-                { block: "input", mods: { size: "l" } },
-            ]
-
-        }
-
-    ])('should return array without errors for %p', (obj) => {
-        expect(formLinter(obj, JSON.stringify(obj))).toEqual([]);
+        validJson1,
+        validJson2,
+        validJson3,
+        validJson4,
+        validJson5,
+        validJson6,
+        validJson7,
+        validJson8,
+        validJson9,
+        validJson10,
+    ])('should return array without errors for %#', (json) => {
+        expect(formLinter(JSON.parse(json), json)).toEqual([]);
     });
 });

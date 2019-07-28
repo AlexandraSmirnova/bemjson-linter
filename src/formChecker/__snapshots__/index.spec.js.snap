@@ -347,3 +347,74 @@ Array [
   },
 ]
 `;
+
+exports[`test form linter should return error FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL for 0 1`] = `
+Array [
+  Object {
+    "code": "FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL",
+    "error": "Подписи и поля должны быть одного размера",
+    "location": Object {
+      "end": Object {
+        "column": 2,
+        "line": 17,
+      },
+      "start": Object {
+        "column": 1,
+        "line": 1,
+      },
+    },
+  },
+]
+`;
+
+exports[`test form linter should return error FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL for 1 1`] = `
+Array [
+  Object {
+    "code": "FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL",
+    "error": "Подписи и поля должны быть одного размера",
+    "location": Object {
+      "end": Object {
+        "column": 2,
+        "line": 7,
+      },
+      "start": Object {
+        "column": 1,
+        "line": 1,
+      },
+    },
+  },
+]
+`;
+
+exports[`test form linter should return error FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL for 2 1`] = `
+Array [
+  Object {
+    "code": "FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL",
+    "error": "Подписи и поля должны быть одного размера",
+    "location": Object {
+      "end": Object {
+        "column": 2,
+        "line": 10,
+      },
+      "start": Object {
+        "column": 1,
+        "line": 1,
+      },
+    },
+  },
+  Object {
+    "code": "FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL",
+    "error": "Подписи и поля должны быть одного размера",
+    "location": Object {
+      "end": Object {
+        "column": 10,
+        "line": 8,
+      },
+      "start": Object {
+        "column": 9,
+        "line": 4,
+      },
+    },
+  },
+]
+`;

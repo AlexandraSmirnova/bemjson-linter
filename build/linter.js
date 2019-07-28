@@ -80,7 +80,7 @@
         }
     };
 
-    const sizes = ['xxxxs', 'xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxxl'];
+    const sizes = ['xxxxxs', 'xxxxs', 'xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxxl', 'xxxxxl'];
 
     const compareWithEtalonSize = (value, etalonSize, step = 0) => {
         const index = sizes.indexOf(etalonSize) + step;
@@ -438,7 +438,7 @@
             }
         }
 
-        return checkContentSizes(block, etalonSize);
+        return etalonSize;
     };
 
     const checkContentSizes = (block, rightSize = null) => {
@@ -450,6 +450,7 @@
                 if (elemsToCheck.some((elem) => checkBlockByName(block, elem) || checkBlockByName(item, elem))) {
                     etalonSize = checkBlockContent(item, etalonSize);
                 }
+                etalonSize = checkContentSizes(item, etalonSize);
             });
         }
 
@@ -460,6 +461,9 @@
         let etalonSize = null;
         try {
             etalonSize = checkContentSizes(objectToCheck);
+            if (!etalonSize) {
+                throw new Error();
+            }
         } catch (e) {
             etalonSize = e.message;
             return {
@@ -474,41 +478,43 @@
         return { sizeErrors: [], etalonSize };
     };
 
-    let etalon = null;
-
-    const checkBlockForm = (obj, json) => {
+    const checkBlockForm = (obj, json, etalonSize = null) => {
+        let etalon = etalonSize;
         const errors = [];
 
-        const { sizeErrors, etalonSize } = checkSizesAndGetEtalon(obj, json);
+        if (!etalon) {
+            const { sizeErrors, etalonSize: foundEtalon } = checkSizesAndGetEtalon(obj, json);
+            etalon = foundEtalon;
+            errors.push(...sizeErrors);
+        } else {
+            if (checkBlockByName(obj, 'content')) {
+                errors.push(...checkContent(obj, json, etalon));
+            }
+            if (checkBlockByName(obj, 'header')) {
+                errors.push(...checkHeader(obj, json, etalon));
+            }
+            if (checkBlockByName(obj, 'footer')) {
+                errors.push(...checkFooter(obj, json, etalon));
+            }
+        }
 
-        if (etalonSize) {
-            etalon = etalonSize;
-        }
-        errors.push(...sizeErrors);
-        if (checkBlockByName(obj, 'content')) {
-            errors.push(...checkContent(obj, json, etalon));
-        }
-        if (checkBlockByName(obj, 'header')) {
-            errors.push(...checkHeader(obj, json, etalon));
-        }
-        if (checkBlockByName(obj, 'footer')) {
-            errors.push(...checkFooter(obj, json, etalon));
+        if (obj.content) {
+            makeBranches(obj.content, (item) => {
+                const { errors: foundErrors, etalon: foundEtalon } = checkBlockForm(item, json, etalon);
+                etalon = foundEtalon;
+                errors.push(...foundErrors);
+            });
         }
 
-        return errors;
+        return { errors, etalon };
     };
 
     const formLinter = (obj, json) => {
         const errors = [];
 
         if (checkBlockByName(obj, 'form')) {
-            errors.push(...checkBlockForm(obj, json));
-        }
-
-        if (obj.content) {
-            makeBranches(obj.content, (item) => {
-                errors.push(...formLinter(item, json));
-            });
+            const { errors: foundErrors} = checkBlockForm(obj, json);
+            errors.push(...foundErrors);
         }
 
         return errors;

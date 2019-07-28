@@ -5,41 +5,43 @@ import checkSizesAndGetEtalon from "./checkSizes";
 import { checkBlockByName } from "../utils/checkUtils";
 import { makeBranches } from "../utils/treeUtils";
 
-let etalon = null;
-
-const checkBlockForm = (obj, json) => {
+const checkBlockForm = (obj, json, etalonSize = null) => {
+    let etalon = etalonSize;
     const errors = [];
 
-    const { sizeErrors, etalonSize } = checkSizesAndGetEtalon(obj, json);
+    if (!etalon) {
+        const { sizeErrors, etalonSize: foundEtalon } = checkSizesAndGetEtalon(obj, json);
+        etalon = foundEtalon;
+        errors.push(...sizeErrors);
+    } else {
+        if (checkBlockByName(obj, 'content')) {
+            errors.push(...checkContent(obj, json, etalon));
+        }
+        if (checkBlockByName(obj, 'header')) {
+            errors.push(...checkHeader(obj, json, etalon));
+        }
+        if (checkBlockByName(obj, 'footer')) {
+            errors.push(...checkFooter(obj, json, etalon));
+        }
+    }
 
-    if (etalonSize) {
-        etalon = etalonSize;
-    }
-    errors.push(...sizeErrors);
-    if (checkBlockByName(obj, 'content')) {
-        errors.push(...checkContent(obj, json, etalon));
-    }
-    if (checkBlockByName(obj, 'header')) {
-        errors.push(...checkHeader(obj, json, etalon));
-    }
-    if (checkBlockByName(obj, 'footer')) {
-        errors.push(...checkFooter(obj, json, etalon));
+    if (obj.content) {
+        makeBranches(obj.content, (item) => {
+            const { errors: foundErrors, etalon: foundEtalon } = checkBlockForm(item, json, etalon);
+            etalon = foundEtalon;
+            errors.push(...foundErrors);
+        })
     }
 
-    return errors;
+    return { errors, etalon };
 }
 
 export const formLinter = (obj, json) => {
     const errors = [];
 
     if (checkBlockByName(obj, 'form')) {
-        errors.push(...checkBlockForm(obj, json));
-    }
-
-    if (obj.content) {
-        makeBranches(obj.content, (item) => {
-            errors.push(...formLinter(item, json))
-        })
+        const { errors: foundErrors} = checkBlockForm(obj, json)
+        errors.push(...foundErrors);
     }
 
     return errors;
