@@ -199,3 +199,117 @@ export const invalidHeaderJson6 = `{
         }
     ]
 }`
+
+export const invalidFooterJson1 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "input",
+            "mods": {
+                "size": "l"
+            }
+        },
+        {
+            "block": "form",
+            "elem": "footer",
+            "mix": { "block": "form", "elem": "item", "mods": { "space-v": "xxl" } }
+        }
+    ]
+}`
+
+export const invalidFooterJson2 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "input",
+            "mods": {
+                "size": "l"
+            }
+        },
+        {
+            "block": "form",
+            "elem": "footer",
+            "mix": [{ "block": "form", "elem": "item", "mods": { "space-v": "s" } }]
+        }
+    ]
+}`
+
+export const invalidFooterJson3 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "input",
+            "mods": {
+                "size": "l"
+            }
+        },
+        {
+            "block": "form",
+            "elem": "footer",
+            "mix": { "block": "form", "elem": "item", "mods": { "space-h": "xxl" } }
+        }
+    ]
+}`
+
+export const invalidFooterJson4 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "input",
+            "mods": {
+                "size": "l"
+            }
+        },
+        {
+            "block": "form",
+            "elem": "footer",
+            "mix": [{ "block": "form", "elem": "item", "mods": { "space-h": "s" } }]
+        }
+    ]
+}`
+
+export const invalidFooterJson5 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "input",
+            "mods": {
+                "size": "l"
+            }
+        },
+        {
+            "block": "form",
+            "elem": "footer",
+            "content": [
+                {
+                    "block": "text",
+                    "mods": {
+                        "size": "xxl"
+                    }
+                }
+            ]
+        }
+    ]
+}`
+
+export const invalidFooterJson6 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "input",
+            "mods": {
+                "size": "l"
+            }
+        },
+        {
+            "block": "form",
+            "elem": "footer",
+            "content": {
+                "block": "text",
+                "mods": {
+                    "size": "s"
+                }
+            }
+        }
+    ]
+}`

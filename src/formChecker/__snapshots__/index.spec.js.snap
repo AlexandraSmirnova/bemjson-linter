@@ -118,12 +118,125 @@ Array [
 ]
 `;
 
+exports[`test form linter should return error FORM.FOOTER_HORIZONTAL_SPACE_IS_INVALID 0 1`] = `
+Array [
+  Object {
+    "code": "FORM.FOOTER_HORIZONTAL_SPACE_IS_INVALID",
+    "error": "Горизонтальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
+    "location": Object {
+      "end": Object {
+        "column": 10,
+        "line": 14,
+      },
+      "start": Object {
+        "column": 9,
+        "line": 10,
+      },
+    },
+  },
+]
+`;
+
+exports[`test form linter should return error FORM.FOOTER_HORIZONTAL_SPACE_IS_INVALID 1 1`] = `
+Array [
+  Object {
+    "code": "FORM.FOOTER_HORIZONTAL_SPACE_IS_INVALID",
+    "error": "Горизонтальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
+    "location": Object {
+      "end": Object {
+        "column": 10,
+        "line": 14,
+      },
+      "start": Object {
+        "column": 9,
+        "line": 10,
+      },
+    },
+  },
+]
+`;
+
+exports[`test form linter should return error FORM.FOOTER_TEXT_SIZE_IS_INVALID 0 1`] = `
+Array [
+  Object {
+    "code": "FORM.FOOTER_TEXT_SIZE_IS_INVALID",
+    "error": "Размер текстовых блоков в подвале должен соответствовать эталонному",
+    "location": Object {
+      "end": Object {
+        "column": 18,
+        "line": 19,
+      },
+      "start": Object {
+        "column": 17,
+        "line": 14,
+      },
+    },
+  },
+]
+`;
+
+exports[`test form linter should return error FORM.FOOTER_TEXT_SIZE_IS_INVALID 1 1`] = `
+Array [
+  Object {
+    "code": "FORM.FOOTER_TEXT_SIZE_IS_INVALID",
+    "error": "Размер текстовых блоков в подвале должен соответствовать эталонному",
+    "location": Object {
+      "end": Object {
+        "column": 14,
+        "line": 18,
+      },
+      "start": Object {
+        "column": 24,
+        "line": 13,
+      },
+    },
+  },
+]
+`;
+
+exports[`test form linter should return error FORM.FOOTER_VERTICAL_SPACE__IS_INVALID 0 1`] = `
+Array [
+  Object {
+    "code": "FORM.FOOTER_VERTICAL_SPACE_IS_INVALID",
+    "error": "Вертикальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
+    "location": Object {
+      "end": Object {
+        "column": 10,
+        "line": 14,
+      },
+      "start": Object {
+        "column": 9,
+        "line": 10,
+      },
+    },
+  },
+]
+`;
+
+exports[`test form linter should return error FORM.FOOTER_VERTICAL_SPACE__IS_INVALID 1 1`] = `
+Array [
+  Object {
+    "code": "FORM.FOOTER_VERTICAL_SPACE_IS_INVALID",
+    "error": "Вертикальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
+    "location": Object {
+      "end": Object {
+        "column": 10,
+        "line": 14,
+      },
+      "start": Object {
+        "column": 9,
+        "line": 10,
+      },
+    },
+  },
+]
+`;
+
 exports[`test form linter should return error FORM.HEADER_HORIZONTAL_SPACE_IS_INVALID 0 1`] = `
 Array [
   Object {
-    "code": "FORM.CONTENT_HORIZONTAL_SPACE_IS_INVALID",
-    "error": "Горизонтальный внутренний отступ контентного элемента должен задаваться 
-        с помощью модификатора space-h на 1 шаг больше эталонного размера",
+    "code": "FORM.HEADER_HORIZONTAL_SPACE_IS_INVALID",
+    "error": "Горизонтальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
     "location": Object {
       "end": Object {
         "column": 10,
@@ -141,9 +254,8 @@ Array [
 exports[`test form linter should return error FORM.HEADER_HORIZONTAL_SPACE_IS_INVALID 1 1`] = `
 Array [
   Object {
-    "code": "FORM.CONTENT_HORIZONTAL_SPACE_IS_INVALID",
-    "error": "Горизонтальный внутренний отступ контентного элемента должен задаваться 
-        с помощью модификатора space-h на 1 шаг больше эталонного размера",
+    "code": "FORM.HEADER_HORIZONTAL_SPACE_IS_INVALID",
+    "error": "Горизонтальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
     "location": Object {
       "end": Object {
         "column": 10,

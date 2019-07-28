@@ -19,7 +19,7 @@ const checkSpaceH = (block, etalonSize) => {
 
     if(spaceH && !isSpaceHRight(spaceH, etalonSize, 1)) {
         throw new FormError(
-            errorCodes.CONTENT_HORIZONTAL_SPACE_IS_INVALID,
+            errorCodes.HEADER_HORIZONTAL_SPACE_IS_INVALID,
         );
     }
 }
