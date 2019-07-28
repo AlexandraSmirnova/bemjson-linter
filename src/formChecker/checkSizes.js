@@ -1,34 +1,33 @@
 import { errorCodes, getErrorInfoByCode } from "./errorCodes";
 import { calculateLocation } from "../utils/jsonUtils";
-import { isSizeRight } from "./sizeHelpers";
-
-const checkBlockMods = (block) => block.mods && block.mods.size;
+import { isSizeRight, getItemSize } from "./sizeHelpers";
+import { makeBranches } from "../utils/treeUtils";
+import { checkBlockByName } from "../utils/searchUtils";
 
 const checkBlockContent = (block, etalonSize) => {
-    if (checkBlockMods(block)) {
+    const itemSize = getItemSize(block);
+
+    if (itemSize) {
         if (!etalonSize) {
-            return block.mods.size;
-        } else if (!isSizeRight(block.mods.size, etalonSize)) {
+            return itemSize;
+        } else if (!isSizeRight(itemSize, etalonSize)) {
             throw new Error(etalonSize);
         }
     }
 
-    if (block.content) {
-        etalonSize = checkContentSizes(block.content, etalonSize);
-    }
-
-    return etalonSize;
+    return checkContentSizes(block, etalonSize);
 }
 
-const checkContentSizes = (content, rightSize = null) => {
+const checkContentSizes = (block, rightSize = null) => {
     let etalonSize = rightSize;
+    const elemsToCheck = ['label', 'input', 'button'];
 
-    if (Array.isArray(content)) {
-        content.forEach((item) => {
-            etalonSize = checkBlockContent(item, etalonSize);
+    if (block.content) {
+        makeBranches(block.content, (item) => {
+            if (elemsToCheck.some((elem) => checkBlockByName(block, elem) || checkBlockByName(item, elem))) {
+                etalonSize = checkBlockContent(item, etalonSize);
+            }
         });
-    } else {
-        etalonSize = checkBlockContent(content, etalonSize);
     }
 
     return etalonSize;
@@ -37,9 +36,7 @@ const checkContentSizes = (content, rightSize = null) => {
 export default (objectToCheck, json) => {
     let etalonSize = null;
     try {
-        if (objectToCheck.content) {
-            etalonSize = checkContentSizes(objectToCheck.content);
-        }
+        etalonSize = checkContentSizes(objectToCheck);
     } catch (e) {
         etalonSize = e.message;
         return {

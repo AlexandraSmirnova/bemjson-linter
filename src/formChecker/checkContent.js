@@ -7,7 +7,7 @@ import { checkBlockByName } from "../utils/searchUtils";
 const checkSpaceV = (mix, etalonSize) => {
     const spaceV = getSpaceV(mix); 
     
-    if(spaceV && !isSpaceVRight(spaceV, etalonSize)) {
+    if(spaceV && !isSpaceVRight(spaceV, etalonSize, 2)) {
         throw new FormError(errorCodes.CONTENT_VERTICAL_SPACE_IS_INVALID);
     }
 }
@@ -15,7 +15,7 @@ const checkSpaceV = (mix, etalonSize) => {
 const checkSpaceH = (mix, etalonSize) => {
     const spaceH = getSpaceH(mix); 
 
-    if(spaceH && !isSpaceHRight(spaceH, etalonSize)) {
+    if(spaceH && !isSpaceHRight(spaceH, etalonSize, 1)) {
         throw new FormError(errorCodes.CONTENT_HORIZONTAL_SPACE_IS_INVALID);
     }
 }
@@ -24,7 +24,7 @@ const checkIndentB = (block, json, etalonSize) => {
     makeBranches(block.mix, (mix) => {
         const indentB = getIndentB(mix); 
 
-        if(indentB && !isIndentBRight(indentB, etalonSize)) {
+        if(indentB && !isIndentBRight(indentB, etalonSize, 1)) {
             throw new FormError(
                 errorCodes.CONTENT_ITEM_INDENT_IS_INVALID,
                 calculateLocation(block, json)

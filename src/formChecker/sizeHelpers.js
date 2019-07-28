@@ -1,24 +1,34 @@
 const sizes = ['xxxxs', 'xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', 'xxxxl'];
 
-export const isSizeRight = (size, rightSize) => size === rightSize;
+// заменить на функцию compareWithEtalonSize
+export const isSizeRight = (size, rightSize, step = 0) => {
+    const index = sizes.indexOf(rightSize) + step;
+    
+    return sizes[index] === size;
+};
 
-export const isSpaceVRight = (spaceV, rightSize) => {
-    const index = sizes.indexOf(rightSize) + 2;
+export const isSpaceVRight = (spaceV, rightSize, step = 0) => {
+    const index = sizes.indexOf(rightSize) + step;
 
     return sizes[index] === spaceV;
 };
 
-export const isSpaceHRight = (spaceH, rightSize) => {
-    const index = sizes.indexOf(rightSize) + 1;
+export const isSpaceHRight = (spaceH, rightSize, step = 0) => {
+    const index = sizes.indexOf(rightSize) + step;
 
     return sizes[index] === spaceH;
 };
 
-export const isIndentBRight = (indentB, rightSize) => {
-    const index = sizes.indexOf(rightSize) + 1;
+export const isIndentBRight = (indentB, rightSize, step = 0) => {
+    const index = sizes.indexOf(rightSize) + step;
 
     return sizes[index] === indentB;
 };
+
+// заменить на функцию getBlockMod
+export const getItemSize = (block) => block.mods && block.mods["size"]
+    ? block.mods["size"]
+    : null;
 
 export const getSpaceV = (block) => block.mods && block.mods["space-v"]
     ? block.mods["space-v"]

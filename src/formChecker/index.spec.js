@@ -1,6 +1,6 @@
 import { formLinter } from '.';
 import { getErrorInfoByCode, errorCodes } from './errorCodes';
-import { invalidSpaceJson1, invalidSpaceJson2, invalidSpaceJson3, invalidSpaceJson4, invalidIndentJson1, invalidIndentJson2 } from './__mocks__/invalidJson';
+import { invalidSpaceJson1, invalidSpaceJson2, invalidSpaceJson3, invalidSpaceJson4, invalidIndentJson1, invalidIndentJson2, invalidHeaderJson1, invalidHeaderJson2, invalidHeaderJson3, invalidHeaderJson4, invalidHeaderJson5, invalidHeaderJson6 } from './__mocks__/invalidJson';
 
 
 describe('test form linter', () => {
@@ -43,72 +43,45 @@ describe('test form linter', () => {
     })
 
     test.each([
-        [
-            invalidSpaceJson1,
-            {
-                start: { column: 16, line: 3 },
-                end: { column: 6, line: 8 }
-            },
-        ],
-        [
-            invalidSpaceJson2,
-            {
-                start: { column: 16, line: 3 },
-                end: { column: 6, line: 8 }
-            },
-        ]
-    ])('should return error FORM.CONTENT_VERTICAL_SPACE_IS_INVALID %#', (json, location) => {
-        const expected = [{
-            ...getErrorInfoByCode(errorCodes.CONTENT_VERTICAL_SPACE_IS_INVALID),
-            location
-        }];
-        expect(formLinter(JSON.parse(json), json)).toEqual(expected);
+        invalidSpaceJson1,
+        invalidSpaceJson2,
+    ])('should return error FORM.CONTENT_VERTICAL_SPACE_IS_INVALID %#', (json) => {
+        expect(formLinter(JSON.parse(json), json)).toMatchSnapshot();
     });
 
     test.each([
-        [
-            invalidSpaceJson3,
-            {
-                start: { column: 16, line: 3 },
-                end: { column: 6, line: 8 }
-            },
-        ],
-        [
-            invalidSpaceJson4,
-            {
-                start: { column: 16, line: 3 },
-                end: { column: 6, line: 8 }
-            },
-        ]
-    ])('should return error FORM.CONTENT_HORIZONTAL_SPACE_IS_INVALID %#', (json, location) => {
-        const expected = [{
-            ...getErrorInfoByCode(errorCodes.CONTENT_HORIZONTAL_SPACE_IS_INVALID),
-            location
-        }];
-        expect(formLinter(JSON.parse(json), json)).toEqual(expected);
+        invalidSpaceJson3,
+        invalidSpaceJson4,
+    ])('should return error FORM.CONTENT_HORIZONTAL_SPACE_IS_INVALID %#', (json) => {
+        expect(formLinter(JSON.parse(json), json)).toMatchSnapshot();
     });
 
     test.each([
-        [
-            invalidIndentJson1,
-            {
-                start: { column: 13, line: 7 },
-                end: { column: 14, line: 12 }
-            },
-        ],
-        [
-            invalidIndentJson2,
-            {
-                start: { column: 13, line: 7 },
-                end: { column: 14, line: 12 }
-            },
-        ]
-    ])('should return error FORM.CONTENT_ITEM_INDENT_IS_INVALID %#', (json, location) => {
-        const expected = [{
-            ...getErrorInfoByCode(errorCodes.CONTENT_ITEM_INDENT_IS_INVALID),
-            location
-        }];
-        expect(formLinter(JSON.parse(json), json)).toEqual(expected);
+        invalidIndentJson1,
+        invalidIndentJson2,
+    ])('should return error FORM.CONTENT_ITEM_INDENT_IS_INVALID %#', (json) => {
+        expect(formLinter(JSON.parse(json), json)).toMatchSnapshot();
+    });
+
+    test.each([
+        invalidHeaderJson1,
+        invalidHeaderJson2,
+    ])('should return error FORM.HEADER_TEXT_SIZE_IS_INVALID %#', (json) => {
+        expect(formLinter(JSON.parse(json), json)).toMatchSnapshot();
+    });
+
+    test.each([
+        invalidHeaderJson3,
+        invalidHeaderJson4,
+    ])('should return error FORM.HEADER_VERTICAL_SPACE_IS_INVALID %#', (json) => {
+        expect(formLinter(JSON.parse(json), json)).toMatchSnapshot();
+    });
+
+    test.each([
+        invalidHeaderJson5,
+        invalidHeaderJson6,
+    ])('should return error FORM.HEADER_HORIZONTAL_SPACE_IS_INVALID %#', (json) => {
+        expect(formLinter(JSON.parse(json), json)).toMatchSnapshot();
     });
 
     test.each([

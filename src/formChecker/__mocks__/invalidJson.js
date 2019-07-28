@@ -79,3 +79,123 @@ export const invalidIndentJson2 = `{
     }
 }
 `
+
+export const invalidHeaderJson1 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "form",
+            "elem": "header",
+            "content": {
+                "block": "text",
+                "mods": {
+                    "size": "xl"
+                }
+            }
+        },
+        {
+            "block": "input",
+            "mods": {
+                "size": "l"
+            }
+        }
+    ]
+}`
+
+export const invalidHeaderJson2 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "form",
+            "elem": "header",
+            "content": [
+                {
+                    "block": "text",
+                    "mods": {
+                        "size": "xxl"
+                    }
+                },
+                {
+                    "block": "text",
+                    "mods": {
+                        "size": "s"
+                    }
+                }
+            ]
+        },
+        {
+            "block": "input",
+            "mods": {
+                "size": "l"
+            }
+        }
+    ]
+}`
+
+export const invalidHeaderJson3 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "form",
+            "elem": "header",
+            "mix": [ { "block": "form", "elem": "item", "mods": { "space-v": "s" } } ]
+        },
+        {
+            "block": "input",
+            "mods": {
+                "size": "l"
+            }
+        }
+    ]
+}`
+
+export const invalidHeaderJson4 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "form",
+            "elem": "header",
+            "mix": { "block": "form", "elem": "item", "mods": { "space-v": "xxl" } }
+        }, 
+        {
+            "block": "input",
+            "mods": {
+                "size": "l"
+            }
+        }
+    ]
+}`
+
+export const invalidHeaderJson5 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "form",
+            "elem": "header",
+            "mix": [ { "block": "form", "elem": "item", "mods": { "space-h": "s" } } ]
+        },
+        {
+            "block": "input",
+            "mods": {
+                "size": "l"
+            }
+        }
+    ]
+}`
+
+export const invalidHeaderJson6 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "form",
+            "elem": "header",
+            "mix": { "block": "form", "elem": "item", "mods": { "space-h": "xxs" } }
+        },
+        {
+            "block": "input",
+            "mods": {
+                "size": "l"
+            }
+        }
+    ]
+}`
