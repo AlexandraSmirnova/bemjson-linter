@@ -13,12 +13,12 @@ export const errorCodes = {
 
 const errorMessages = {
     [errorCodes.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL]: 'Подписи и поля должны быть одного размера',
-    [errorCodes.CONTENT_VERTICAL_SPACE_IS_INVALID]: `Вертикальный внутренний отступ контентного элемента со значением space-v 
+    [errorCodes.CONTENT_VERTICAL_SPACE_IS_INVALID]: `Вертикальный внутренний отступ контентного элемента со значением space-v
         должен быть на 2 шага больше эталонного размера`,
-    [errorCodes.CONTENT_HORIZONTAL_SPACE_IS_INVALID]: `Горизонтальный внутренний отступ контентного элемента должен задаваться 
+    [errorCodes.CONTENT_HORIZONTAL_SPACE_IS_INVALID]: `Горизонтальный внутренний отступ контентного элемента должен задаваться
         с помощью модификатора space-h на 1 шаг больше эталонного размера`,
     [errorCodes.CONTENT_ITEM_INDENT_IS_INVALID]: `Модификатора indent-b у элементов формы content-item должен быть на 1 шаг больше эталонного размера`,
-    [errorCodes.HEADER_TEXT_SIZE_IS_INVALID]: `Все текстовые блоки в заголовке формы (элемент header) должны быть со значением 
+    [errorCodes.HEADER_TEXT_SIZE_IS_INVALID]: `Все текстовые блоки в заголовке формы (элемент header) должны быть со значением
         модификатора size на 2 шага больше эталонного размера`,
     [errorCodes.HEADER_VERTICAL_SPACE_IS_INVALID]: "Горизонтальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
     [errorCodes.HEADER_HORIZONTAL_SPACE_IS_INVALID]: "Горизонтальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
@@ -40,5 +40,20 @@ export class FormError extends Error {
         this.code = errorInfo.code;
         this.error = errorInfo.error;
         this.location = location;
+    }
+}
+
+export class ErrorCollector {
+    constructor(defaultLocation) {
+        this.errors = [];
+        this.defaultLocation = defaultLocation;
+    }
+
+    getErrors () {
+        return this.errors;
+    }
+
+    addErrors(value) {
+        this.errors.push(value);
     }
 }

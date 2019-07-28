@@ -1,4 +1,4 @@
-export const invalidSizeJson1 = `{ 
+export const invalidSizeJson1 = `{
     "block": "form",
     "content":  [
         {
@@ -9,14 +9,14 @@ export const invalidSizeJson1 = `{
                 "mods": { "size": "l" }
             }
         },
-        { 
-            "block": "input", 
+        {
+            "block": "input",
             "mods": { "size": "s" }
         }
     ]
 }`;
 
-export const invalidSizeJson2 = `{ 
+export const invalidSizeJson2 = `{
     "block": "form",
     "content": [
         { "block": "input", "mods": { "size": "s" } },
@@ -188,7 +188,7 @@ export const invalidHeaderJson4 = `{
             "block": "form",
             "elem": "header",
             "mix": { "block": "form", "elem": "item", "mods": { "space-v": "xxl" } }
-        }, 
+        },
         {
             "block": "input",
             "mods": {
@@ -342,6 +342,37 @@ export const invalidFooterJson6 = `{
                     "size": "s"
                 }
             }
+        }
+    ]
+}`;
+
+export const severalErrorsJson1 = `{
+    "block": "form",
+    "content": {
+        "block": "form",
+        "elem": "content",
+        "mix": [
+            { "block": "form", "elem": "item", "mods": { "size": "l", "space-h": "s" , "space-v": "s" } }
+        ],
+        "content": [
+            { "block": "input", "mods": { "size": "l" } }
+        ]
+    }
+}`;
+
+export const severalErrorsJson2 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "form",
+            "elem": "content",
+            "content": { "block": "input", "mods": { "size": "xl" } },
+            "mix": [{ "block": "form", "elem": "item", "mods": { "size": "l", "space-h": "s" } }]
+        },
+        {
+            "block": "form",
+            "elem": "footer",
+            "mix": [{ "block": "form", "elem": "item", "mods": { "space-v": "s" } }]
         }
     ]
 }`;

@@ -1,7 +1,10 @@
-import { errorCodes, FormError } from "./errorCodes";
+import { errorCodes, FormError, ErrorCollector } from "./errorCodes";
 import calculateLocation from "../utils/calculateLocation";
 import { makeBranches } from "../utils/treeUtils";
-import { checkBlockByName, getBlockMod, compareWithEtalonSize } from "../utils/checkUtils";
+import { checkBlockByName, getBlockMod, compareWithEtalonSize, wrapRule } from "../utils/checkUtils";
+
+let errorCollector = null;
+let wrapContentRule = null;
 
 const checkSpaceV = (mix, etalonSize) => {
     const spaceV = getBlockMod(mix, 'space-v');
@@ -35,15 +38,17 @@ const checkIndentB = (block, json, etalonSize) => {
 const checkSpacesAndIndents = (block, json, etalonSize) => {
     if (block.mix) {
         makeBranches(block.mix, (mix) => {
-            checkSpaceV(mix, etalonSize);
-            checkSpaceH(mix, etalonSize);
+            wrapContentRule(checkSpaceV, [mix, etalonSize]);
+            console.log('v', errorCollector.getErrors());
+            wrapContentRule(checkSpaceH, [mix, etalonSize]);
+            console.log('h', errorCollector.getErrors());
         })
     }
 
     if (block.content) {
         makeBranches(block.content, (contentItem) => {
             if (checkBlockByName(contentItem, 'content-item') && contentItem.mix) {
-                checkIndentB(contentItem, json, etalonSize);
+                wrapContentRule(checkIndentB, [contentItem, json, etalonSize]);
             }
         })
     }
@@ -53,19 +58,10 @@ const checkSpacesAndIndents = (block, json, etalonSize) => {
 
 
 export default (objectToCheck, json, etalonSize) => {
-    try {
-        checkSpacesAndIndents(objectToCheck, json, etalonSize);
-    } catch (e) {
-        if (e instanceof FormError) {
-            return [{
-                code: e.code,
-                error: e.error,
-                location: e.location ? e.location : calculateLocation(objectToCheck, json),
-            }]
-        }
+    errorCollector = new ErrorCollector(calculateLocation(objectToCheck, json));
+    wrapContentRule = wrapRule(errorCollector, FormError);
 
-        throw e;
-    }
+    checkSpacesAndIndents(objectToCheck, json, etalonSize);
 
-    return [];
+    return errorCollector.getErrors();
 }

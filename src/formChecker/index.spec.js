@@ -3,7 +3,8 @@ import {
     invalidSpaceJson1, invalidSpaceJson2, invalidSpaceJson3, invalidSpaceJson4,
     invalidIndentJson1, invalidIndentJson2, invalidHeaderJson1, invalidHeaderJson2, invalidHeaderJson3,
     invalidHeaderJson4, invalidHeaderJson5, invalidHeaderJson6, invalidFooterJson1, invalidFooterJson2,
-    invalidFooterJson3, invalidFooterJson4, invalidFooterJson5, invalidFooterJson6, invalidSizeJson1, invalidSizeJson2, invalidSizeJson3
+    invalidFooterJson3, invalidFooterJson4, invalidFooterJson5, invalidFooterJson6, invalidSizeJson1,
+    invalidSizeJson2, invalidSizeJson3, severalErrorsJson1, severalErrorsJson2
 } from './__mocks__/invalidJsons';
 import {
     validJson1, validJson2, validJson3, validJson4, validJson5, validJson6, validJson7, validJson8,
@@ -79,6 +80,14 @@ describe('test form linter', () => {
         invalidFooterJson5,
         invalidFooterJson6,
     ])('should return error FORM.FOOTER_TEXT_SIZE_IS_INVALID %#', (json) => {
+        expect(formLinter(JSON.parse(json), json)).toMatchSnapshot();
+    });
+
+
+    test.each([
+        severalErrorsJson1,
+        severalErrorsJson2,
+    ])('should return several errors %#', (json) => {
         expect(formLinter(JSON.parse(json), json)).toMatchSnapshot();
     });
 

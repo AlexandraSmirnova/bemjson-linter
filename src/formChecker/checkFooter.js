@@ -1,7 +1,10 @@
-import { errorCodes, FormError } from "./errorCodes";
+import { errorCodes, FormError, ErrorCollector } from "./errorCodes";
 import calculateLocation from "../utils/calculateLocation";
 import { makeBranches } from "../utils/treeUtils";
-import { checkBlockByName, getBlockMod, compareWithEtalonSize } from "../utils/checkUtils";
+import { checkBlockByName, getBlockMod, compareWithEtalonSize, wrapRule } from "../utils/checkUtils";
+
+let errorCollector = null;
+let wrapFooterRule = null;
 
 const checkSpaceV = (block, etalonSize) => {
     const spaceV = getBlockMod(block, 'space-v');
@@ -34,12 +37,12 @@ const checkTextSize = (block, json, etalonSize) => {
     }
 }
 
-const checkHeaderRules = (block, json, etalonSize) => {
+const checkFooterRules = (block, json, etalonSize) => {
     if (block.mix) {
         makeBranches(block.mix, (mix) => {
             if (checkBlockByName(mix, 'item') && mix.mods) {
-                checkSpaceV(mix, etalonSize);
-                checkSpaceH(mix, etalonSize);
+                wrapFooterRule(checkSpaceV, [mix, etalonSize]);
+                wrapFooterRule(checkSpaceH, [mix, etalonSize]);
             }
         })
     }
@@ -47,7 +50,7 @@ const checkHeaderRules = (block, json, etalonSize) => {
     if (block.content) {
         makeBranches(block.content, (contentItem) => {
             if (checkBlockByName(contentItem, 'text') && contentItem.mods) {
-                checkTextSize(contentItem, json, etalonSize);
+                wrapFooterRule(checkTextSize, [contentItem, json, etalonSize]);
             }
         })
     }
@@ -57,19 +60,10 @@ const checkHeaderRules = (block, json, etalonSize) => {
 
 
 export default (objectToCheck, json, etalonSize) => {
-    try {
-        checkHeaderRules(objectToCheck, json, etalonSize);
-    } catch (e) {
-        if (e instanceof FormError) {
-            return [{
-                code: e.code,
-                error: e.error,
-                location: e.location ? e.location : calculateLocation(objectToCheck, json),
-            }]
-        }
+    errorCollector = new ErrorCollector(calculateLocation(objectToCheck, json));
+    wrapFooterRule = wrapRule(errorCollector, FormError);
 
-        throw e;
-    }
+    checkFooterRules(objectToCheck, json, etalonSize);
 
-    return [];
+    return errorCollector.getErrors();
 }

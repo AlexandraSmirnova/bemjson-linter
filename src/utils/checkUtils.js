@@ -18,3 +18,18 @@ export const checkBlockByName = (obj, blockName) => Boolean(
         : checkBlockByName(obj.mix, blockName))
 );
 
+export const wrapRule = (errorCollector, generalErrorType) => (ruleFunc, params) => {
+    try {
+        ruleFunc(...params);
+    } catch (e) {
+        if (e instanceof generalErrorType) {
+            return errorCollector.addErrors({
+                code: e.code,
+                error: e.error,
+                location: e.location ? e.location : errorCollector.defaultLocation,
+            });
+        }
+
+        throw e;
+    }
+}

@@ -4,7 +4,7 @@ exports[`test form linter should return error FORM.CONTENT_HORIZONTAL_SPACE_IS_I
 Array [
   Object {
     "code": "FORM.CONTENT_HORIZONTAL_SPACE_IS_INVALID",
-    "error": "Горизонтальный внутренний отступ контентного элемента должен задаваться 
+    "error": "Горизонтальный внутренний отступ контентного элемента должен задаваться
         с помощью модификатора space-h на 1 шаг больше эталонного размера",
     "location": Object {
       "end": Object {
@@ -24,7 +24,7 @@ exports[`test form linter should return error FORM.CONTENT_HORIZONTAL_SPACE_IS_I
 Array [
   Object {
     "code": "FORM.CONTENT_HORIZONTAL_SPACE_IS_INVALID",
-    "error": "Горизонтальный внутренний отступ контентного элемента должен задаваться 
+    "error": "Горизонтальный внутренний отступ контентного элемента должен задаваться
         с помощью модификатора space-h на 1 шаг больше эталонного размера",
     "location": Object {
       "end": Object {
@@ -82,7 +82,7 @@ exports[`test form linter should return error FORM.CONTENT_VERTICAL_SPACE_IS_INV
 Array [
   Object {
     "code": "FORM.CONTENT_VERTICAL_SPACE_IS_INVALID",
-    "error": "Вертикальный внутренний отступ контентного элемента со значением space-v 
+    "error": "Вертикальный внутренний отступ контентного элемента со значением space-v
         должен быть на 2 шага больше эталонного размера",
     "location": Object {
       "end": Object {
@@ -102,7 +102,7 @@ exports[`test form linter should return error FORM.CONTENT_VERTICAL_SPACE_IS_INV
 Array [
   Object {
     "code": "FORM.CONTENT_VERTICAL_SPACE_IS_INVALID",
-    "error": "Вертикальный внутренний отступ контентного элемента со значением space-v 
+    "error": "Вертикальный внутренний отступ контентного элемента со значением space-v
         должен быть на 2 шага больше эталонного размера",
     "location": Object {
       "end": Object {
@@ -274,7 +274,7 @@ exports[`test form linter should return error FORM.HEADER_TEXT_SIZE_IS_INVALID 0
 Array [
   Object {
     "code": "FORM.HEADER_TEXT_SIZE_IS_INVALID",
-    "error": "Все текстовые блоки в заголовке формы (элемент header) должны быть со значением 
+    "error": "Все текстовые блоки в заголовке формы (элемент header) должны быть со значением
         модификатора size на 2 шага больше эталонного размера",
     "location": Object {
       "end": Object {
@@ -294,7 +294,7 @@ exports[`test form linter should return error FORM.HEADER_TEXT_SIZE_IS_INVALID 1
 Array [
   Object {
     "code": "FORM.HEADER_TEXT_SIZE_IS_INVALID",
-    "error": "Все текстовые блоки в заголовке формы (элемент header) должны быть со значением 
+    "error": "Все текстовые блоки в заголовке формы (элемент header) должны быть со значением
         модификатора size на 2 шага больше эталонного размера",
     "location": Object {
       "end": Object {
@@ -413,6 +413,75 @@ Array [
       "start": Object {
         "column": 9,
         "line": 4,
+      },
+    },
+  },
+]
+`;
+
+exports[`test form linter should return several errors 0 1`] = `
+Array [
+  Object {
+    "code": "FORM.CONTENT_VERTICAL_SPACE_IS_INVALID",
+    "error": "Вертикальный внутренний отступ контентного элемента со значением space-v
+        должен быть на 2 шага больше эталонного размера",
+    "location": Object {
+      "end": Object {
+        "column": 6,
+        "line": 12,
+      },
+      "start": Object {
+        "column": 16,
+        "line": 3,
+      },
+    },
+  },
+  Object {
+    "code": "FORM.CONTENT_HORIZONTAL_SPACE_IS_INVALID",
+    "error": "Горизонтальный внутренний отступ контентного элемента должен задаваться
+        с помощью модификатора space-h на 1 шаг больше эталонного размера",
+    "location": Object {
+      "end": Object {
+        "column": 6,
+        "line": 12,
+      },
+      "start": Object {
+        "column": 16,
+        "line": 3,
+      },
+    },
+  },
+]
+`;
+
+exports[`test form linter should return several errors 1 1`] = `
+Array [
+  Object {
+    "code": "FORM.CONTENT_HORIZONTAL_SPACE_IS_INVALID",
+    "error": "Горизонтальный внутренний отступ контентного элемента должен задаваться
+        с помощью модификатора space-h на 1 шаг больше эталонного размера",
+    "location": Object {
+      "end": Object {
+        "column": 10,
+        "line": 9,
+      },
+      "start": Object {
+        "column": 9,
+        "line": 4,
+      },
+    },
+  },
+  Object {
+    "code": "FORM.FOOTER_VERTICAL_SPACE_IS_INVALID",
+    "error": "Вертикальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
+    "location": Object {
+      "end": Object {
+        "column": 10,
+        "line": 14,
+      },
+      "start": Object {
+        "column": 9,
+        "line": 10,
       },
     },
   },

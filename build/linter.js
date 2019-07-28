@@ -100,6 +100,22 @@
             : checkBlockByName(obj.mix, blockName))
     );
 
+    const wrapRule = (errorCollector, generalErrorType) => (ruleFunc, params) => {
+        try {
+            ruleFunc(...params);
+        } catch (e) {
+            if (e instanceof generalErrorType) {
+                return errorCollector.addErrors({
+                    code: e.code,
+                    error: e.error,
+                    location: e.location ? e.location : errorCollector.defaultLocation,
+                });
+            }
+
+            throw e;
+        }
+    };
+
     /**
      * Функция для упрощения обработки полей, которые могут быть как объектами, так и массивами
      * @param  {array|object} source - поле, которое может быть как объектом так и массивом объектов
@@ -188,12 +204,12 @@
 
     const errorMessages = {
         [errorCodes$1.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL]: 'Подписи и поля должны быть одного размера',
-        [errorCodes$1.CONTENT_VERTICAL_SPACE_IS_INVALID]: `Вертикальный внутренний отступ контентного элемента со значением space-v 
+        [errorCodes$1.CONTENT_VERTICAL_SPACE_IS_INVALID]: `Вертикальный внутренний отступ контентного элемента со значением space-v
         должен быть на 2 шага больше эталонного размера`,
-        [errorCodes$1.CONTENT_HORIZONTAL_SPACE_IS_INVALID]: `Горизонтальный внутренний отступ контентного элемента должен задаваться 
+        [errorCodes$1.CONTENT_HORIZONTAL_SPACE_IS_INVALID]: `Горизонтальный внутренний отступ контентного элемента должен задаваться
         с помощью модификатора space-h на 1 шаг больше эталонного размера`,
         [errorCodes$1.CONTENT_ITEM_INDENT_IS_INVALID]: `Модификатора indent-b у элементов формы content-item должен быть на 1 шаг больше эталонного размера`,
-        [errorCodes$1.HEADER_TEXT_SIZE_IS_INVALID]: `Все текстовые блоки в заголовке формы (элемент header) должны быть со значением 
+        [errorCodes$1.HEADER_TEXT_SIZE_IS_INVALID]: `Все текстовые блоки в заголовке формы (элемент header) должны быть со значением
         модификатора size на 2 шага больше эталонного размера`,
         [errorCodes$1.HEADER_VERTICAL_SPACE_IS_INVALID]: "Горизонтальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
         [errorCodes$1.HEADER_HORIZONTAL_SPACE_IS_INVALID]: "Горизонтальный внутренний отступ должен быть на 1 шаг больше эталонного размера",
@@ -217,6 +233,24 @@
             this.location = location;
         }
     }
+
+    class ErrorCollector {
+        constructor(defaultLocation) {
+            this.errors = [];
+            this.defaultLocation = defaultLocation;
+        }
+
+        getErrors () {
+            return this.errors;
+        }
+
+        addErrors(value) {
+            this.errors.push(value);
+        }
+    }
+
+    let errorCollector = null;
+    let wrapContentRule = null;
 
     const checkSpaceV = (mix, etalonSize) => {
         const spaceV = getBlockMod(mix, 'space-v');
@@ -250,15 +284,15 @@
     const checkSpacesAndIndents = (block, json, etalonSize) => {
         if (block.mix) {
             makeBranches(block.mix, (mix) => {
-                checkSpaceV(mix, etalonSize);
-                checkSpaceH(mix, etalonSize);
+                wrapContentRule(checkSpaceV, [mix, etalonSize]);
+                wrapContentRule(checkSpaceH, [mix, etalonSize]);
             });
         }
 
         if (block.content) {
             makeBranches(block.content, (contentItem) => {
                 if (checkBlockByName(contentItem, 'content-item') && contentItem.mix) {
-                    checkIndentB(contentItem, json, etalonSize);
+                    wrapContentRule(checkIndentB, [contentItem, json, etalonSize]);
                 }
             });
         }
@@ -268,22 +302,16 @@
 
 
     var checkContent = (objectToCheck, json, etalonSize) => {
-        try {
-            checkSpacesAndIndents(objectToCheck, json, etalonSize);
-        } catch (e) {
-            if (e instanceof FormError) {
-                return [{
-                    code: e.code,
-                    error: e.error,
-                    location: e.location ? e.location : calculateLocation(objectToCheck, json),
-                }]
-            }
+        errorCollector = new ErrorCollector(calculateLocation(objectToCheck, json));
+        wrapContentRule = wrapRule(errorCollector, FormError);
 
-            throw e;
-        }
+        checkSpacesAndIndents(objectToCheck, json, etalonSize);
 
-        return [];
+        return errorCollector.getErrors();
     };
+
+    let errorCollector$1 = null;
+    let wrapFooterRule = null;
 
     const checkSpaceV$1 = (block, etalonSize) => {
         const spaceV = getBlockMod(block, 'space-v');
@@ -316,12 +344,12 @@
         }
     };
 
-    const checkHeaderRules = (block, json, etalonSize) => {
+    const checkFooterRules = (block, json, etalonSize) => {
         if (block.mix) {
             makeBranches(block.mix, (mix) => {
                 if (checkBlockByName(mix, 'item') && mix.mods) {
-                    checkSpaceV$1(mix, etalonSize);
-                    checkSpaceH$1(mix, etalonSize);
+                    wrapFooterRule(checkSpaceV$1, [mix, etalonSize]);
+                    wrapFooterRule(checkSpaceH$1, [mix, etalonSize]);
                 }
             });
         }
@@ -329,7 +357,7 @@
         if (block.content) {
             makeBranches(block.content, (contentItem) => {
                 if (checkBlockByName(contentItem, 'text') && contentItem.mods) {
-                    checkTextSize(contentItem, json, etalonSize);
+                    wrapFooterRule(checkTextSize, [contentItem, json, etalonSize]);
                 }
             });
         }
@@ -339,22 +367,16 @@
 
 
     var checkFooter = (objectToCheck, json, etalonSize) => {
-        try {
-            checkHeaderRules(objectToCheck, json, etalonSize);
-        } catch (e) {
-            if (e instanceof FormError) {
-                return [{
-                    code: e.code,
-                    error: e.error,
-                    location: e.location ? e.location : calculateLocation(objectToCheck, json),
-                }]
-            }
+        errorCollector$1 = new ErrorCollector(calculateLocation(objectToCheck, json));
+        wrapFooterRule = wrapRule(errorCollector$1, FormError);
 
-            throw e;
-        }
+        checkFooterRules(objectToCheck, json, etalonSize);
 
-        return [];
+        return errorCollector$1.getErrors();
     };
+
+    let errorCollector$2 = null;
+    let wrapHeaderRule = null;
 
     const checkSpaceV$2 = (block, etalonSize) => {
         const spaceV = getBlockMod(block, 'space-v');
@@ -387,12 +409,12 @@
         }
     };
 
-    const checkHeaderRules$1 = (block, json, etalonSize) => {
+    const checkHeaderRules = (block, json, etalonSize) => {
         if (block.mix) {
             makeBranches(block.mix, (mix) => {
                 if (checkBlockByName(mix, 'item') && mix.mods) {
-                    checkSpaceV$2(mix, etalonSize);
-                    checkSpaceH$2(mix, etalonSize);
+                    wrapHeaderRule(checkSpaceV$2, [mix, etalonSize]);
+                    wrapHeaderRule(checkSpaceH$2, [mix, etalonSize]);
                 }
             });
         }
@@ -400,7 +422,7 @@
         if (block.content) {
             makeBranches(block.content, (contentItem) => {
                 if (checkBlockByName(contentItem, 'text') && contentItem.mods) {
-                    checkTextSize$1(contentItem, json, etalonSize);
+                    wrapHeaderRule(checkTextSize$1, [contentItem, json, etalonSize]);
                 }
             });
         }
@@ -410,21 +432,12 @@
 
 
     var checkHeader = (objectToCheck, json, etalonSize) => {
-        try {
-            checkHeaderRules$1(objectToCheck, json, etalonSize);
-        } catch (e) {
-            if (e instanceof FormError) {
-                return [{
-                    code: e.code,
-                    error: e.error,
-                    location: e.location ? e.location : calculateLocation(objectToCheck, json),
-                }]
-            }
+        errorCollector$2 = new ErrorCollector(calculateLocation(objectToCheck, json));
+        wrapHeaderRule = wrapRule(errorCollector$2, FormError);
 
-            throw e;
-        }
+        checkHeaderRules(objectToCheck, json, etalonSize);
 
-        return [];
+        return errorCollector$2.getErrors();
     };
 
     const checkBlockContent = (block, etalonSize) => {
