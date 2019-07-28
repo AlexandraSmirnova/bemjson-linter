@@ -1,11 +1,11 @@
 import { errorCodes, FormError } from "./errorCodes";
 import { calculateLocation } from "../utils/jsonUtils";
 import { makeBranches } from "../utils/treeUtils";
-import { isSpaceVRight, getSpaceV, getSpaceH, isSpaceHRight, getIndentB, isIndentBRight } from "./sizeHelpers";
+import { isSpaceVRight, isSpaceHRight, isIndentBRight, getBlockMod } from "./sizeHelpers";
 import { checkBlockByName } from "../utils/searchUtils";
 
 const checkSpaceV = (mix, etalonSize) => {
-    const spaceV = getSpaceV(mix); 
+    const spaceV = getBlockMod(mix, 'space-v'); 
     
     if(spaceV && !isSpaceVRight(spaceV, etalonSize, 2)) {
         throw new FormError(errorCodes.CONTENT_VERTICAL_SPACE_IS_INVALID);
@@ -13,7 +13,7 @@ const checkSpaceV = (mix, etalonSize) => {
 }
 
 const checkSpaceH = (mix, etalonSize) => {
-    const spaceH = getSpaceH(mix); 
+    const spaceH = getBlockMod(mix, 'space-h'); 
 
     if(spaceH && !isSpaceHRight(spaceH, etalonSize, 1)) {
         throw new FormError(errorCodes.CONTENT_HORIZONTAL_SPACE_IS_INVALID);
@@ -22,7 +22,7 @@ const checkSpaceH = (mix, etalonSize) => {
 
 const checkIndentB = (block, json, etalonSize) => {
     makeBranches(block.mix, (mix) => {
-        const indentB = getIndentB(mix); 
+        const indentB = getBlockMod(mix, 'indent-b'); 
 
         if(indentB && !isIndentBRight(indentB, etalonSize, 1)) {
             throw new FormError(

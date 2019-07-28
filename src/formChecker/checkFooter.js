@@ -1,11 +1,11 @@
 import { errorCodes, FormError } from "./errorCodes";
-import { isSizeRight, isSpaceVRight, isSpaceHRight, getSpaceV, getSpaceH, getItemSize } from "./sizeHelpers";
+import { isSizeRight, isSpaceVRight, isSpaceHRight, getBlockMod } from "./sizeHelpers";
 import { calculateLocation } from "../utils/jsonUtils";
 import { makeBranches } from "../utils/treeUtils";
 import { checkBlockByName } from "../utils/searchUtils";
 
 const checkSpaceV = (block, etalonSize) => {
-    const spaceV = getSpaceV(block); 
+    const spaceV = getBlockMod(block, 'space-v'); 
     
     if(spaceV && !isSpaceVRight(spaceV, etalonSize)) {
         throw new FormError(
@@ -15,7 +15,7 @@ const checkSpaceV = (block, etalonSize) => {
 }
 
 const checkSpaceH = (block, etalonSize) => {
-    const spaceH = getSpaceH(block); 
+    const spaceH = getBlockMod(block, 'space-h'); 
 
     if(spaceH && !isSpaceHRight(spaceH, etalonSize, 1)) {
         throw new FormError(
@@ -25,7 +25,7 @@ const checkSpaceH = (block, etalonSize) => {
 }
 
 const checkTextSize = (block, json, etalonSize) => {
-    const blockSize = getItemSize(block); 
+    const blockSize = getBlockMod(block, 'size'); 
 
     if(blockSize && !isSizeRight(blockSize, etalonSize)) {
         throw new FormError(
